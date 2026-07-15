@@ -1,20 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import {
-  ExternalLink,
-  Eye,
-  ChevronRight,
-  Code,
-  Palette,
-  Zap,
-  Globe,
-} from "lucide-react";
-import { Card, CardBody, CardFooter, Divider } from "@heroui/react";
-import { useKeenSlider } from "keen-slider/react";
-import TestimonialSlider from "@/components/testimonials-slider";
-import { solutionsTestimonials } from "@/data/testimonials-solutions";
+import { ChevronRight, Globe } from "lucide-react";
 import { Tooltip } from "react-tooltip";
 import TestimonialsSlider from "@/components/testimonials-slider";
+import { solutionsTestimonials } from "@/data/testimonials-solutions";
 
 interface Solution {
   id: number;
@@ -26,7 +15,7 @@ interface Solution {
   technologies: string[];
 }
 
-// All 15 websites from your portfolio
+// Active portfolio websites (disabled/retired entries removed — see git history to restore)
 const solutionsdata: Solution[] = [
   {
     id: 1,
@@ -68,24 +57,6 @@ const solutionsdata: Solution[] = [
     category: "Real Estate",
     technologies: ["Next.js", "Laravel", "MySQL", "Shadcn/ui", "TypeScript"],
   },
-  // {
-  //   id: 5,
-  //   project: "Oppane E-Commerce",
-  //   description: "Full-featured e-commerce platform with inventory management, payment integration and comprehensive analytics dashboard.",
-  //   link: "https://oppane.vercel.app/",
-  //   image: "/websites/oppane.png",
-  //   category: "E-Commerce",
-  //   technologies: ["Next.js", "Laravel", "MySQL", "Node.js", "Tailwind CSS"],
-  // },
-  // {
-  //   id: 6,
-  //   project: "Unakichi E-Commerce",
-  //   description: "Modern e-commerce solution with product catalog, shopping cart and advanced order management system.",
-  //   link: "https://unakichi.vercel.app/",
-  //   image: "/websites/unakichi.png",
-  //   category: "E-Commerce",
-  //   technologies: ["TypeScript", "Laravel", "MySQL", "Hero UI", "Node.js"],
-  // },
   {
     id: 7,
     project: "Anilao Scuba Diving Center",
@@ -117,65 +88,6 @@ const solutionsdata: Solution[] = [
     technologies: ["Next.js", "TypeScript", "Laravel", "MySQL", "Hero UI"],
   },
   {
-    id: 10,
-    project: "Joe Property Specialist",
-    description:
-      "Personal real estate portfolio showcasing luxury properties and professional real estate services with client management.",
-    link: "https://abicrealtyphjoe.com/",
-    image: "/websites/joe.png",
-    category: "Property Specialist",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "MySQL", "Laravel"],
-  },
-  {
-    id: 11,
-    project: "Kaila Property Specialist",
-    description:
-      "Professional property consultant website with comprehensive property listings and advanced client management tools.",
-    link: "https://abicrealtyphkaila.com/",
-    image: "/websites/kaila.png",
-    category: "Property Specialist",
-    technologies: ["React", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
-  },
-  {
-    id: 12,
-    project: "Angely Property Specialist",
-    description:
-      "Real estate specialist platform featuring premium properties and personalized client services with virtual tours.",
-    link: "https://abicrealtyphkaila.com/",
-    image: "/websites/angely.png",
-    category: "Property Specialist",
-    technologies: ["Next.js", "Laravel", "MySQL", "Shadcn/ui", "TypeScript"],
-  },
-  {
-    id: 13,
-    project: "Jayvee Property Specialist",
-    description:
-      "Commercial and residential property specialist with advanced search functionality and inquiry management system.",
-    link: "https://abicrealtyphjayvee.com/",
-    image: "/websites/jayvee.png",
-    category: "Property Specialist",
-    technologies: ["Next.js", "TypeScript", "Laravel", "MySQL", "Hero UI"],
-  },
-  // {
-  //   id: 14,
-  //   project: "Lloyd Property Specialist",
-  //   description: "Professional real estate consultant website with property showcase and comprehensive lead generation tools.",
-  //   link: "https://abicrealtyphlloyd.com/",
-  //   image: "/websites/lloyd.png",
-  //   category: "Property Specialist",
-  //   technologies: ["React", "Laravel", "MySQL", "Tailwind CSS", "Node.js"]
-  // },
-  {
-    id: 15,
-    project: "Janina Property Specialist",
-    description:
-      "Luxury property specialist platform with virtual tours and comprehensive property management features.",
-    link: "https://abicrealtyphjanina.com/",
-    image: "/websites/janina.png",
-    category: "Property Specialist",
-    technologies: ["Next.js", "Laravel", "MySQL", "Shadcn/ui", "TypeScript"],
-  },
-  {
     id: 16,
     project: "Izakaya Tori Ichizu",
     description:
@@ -195,6 +107,96 @@ const solutionsdata: Solution[] = [
     category: "Real Estate",
     technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
   },
+  {
+    id: 18,
+    project: "G-Limit Studio",
+    description:
+      "Photography and videography studio website showcasing portfolio galleries, service packages, and booking inquiries for creative shoots.",
+    link: "https://www.g-limitstudio.com/",
+    image: "/websites/glimitstudio.png",
+    category: "Photography & Videography",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 19,
+    project: "Hilee Tumbler",
+    description:
+      "E-commerce store for premium insulated tumblers featuring a product catalog, customization options, and online ordering for a Philippine drinkware brand.",
+    link: "https://hilee-tumbler.vercel.app/",
+    image: "/websites/hilee.png",
+    category: "E-Commerce",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 20,
+    project: "Ipponyari Japanese Restaurant",
+    description:
+      "Multi-branch Japanese restaurant website with menu showcase, table reservations, and location details for authentic yakitori, sushi, and ramen dining.",
+    link: "https://ipponyari-japanese-restaurant.vercel.app/",
+    image: "/websites/ipponyari.png",
+    category: "Restaurant",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 21,
+    project: "Vencio's Garden Hotel & Restaurant",
+    description:
+      "Luxury hotel reservation website featuring 360° virtual room tours, amenities showcase, and online booking for a garden retreat destination.",
+    link: "https://vencios.vercel.app/",
+    image: "/websites/vencios.png",
+    category: "Hotel Management",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 22,
+    project: "Whole Love",
+    description:
+      "High-quality, affordable sanitary napkins and wet wipes designed for comfort, cleanliness, and confidence — every moment of the month.",
+    link: "https://wholeloveph.com/",
+    image: "/websites/wholelove.png",
+    category: "E-Commerce",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 23,
+    project: "Hi Beauty Spa",
+    description:
+      "Luxury spa and wellness website showcasing treatment packages, pricing, client testimonials, and location details for a Makati-based spa retreat.",
+    link: "https://www.hibeautyspaph.com/",
+    image: "/websites/hibeautyspa.png",
+    category: "Booking System",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 24,
+    project: "YH eSIM",
+    description:
+      "Global eSIM connectivity platform offering instant digital SIM activation, destination-based data plans, and coverage across 190+ countries for travelers.",
+    link: "https://yh-esim.vercel.app/",
+    image: "/websites/yhesim.png",
+    category: "E-Commerce",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 25,
+    project: "Lumè Bean & Bar",
+    description:
+      "Premium coffee shop and cocktail bar website featuring a menu showcase, table reservations, and blog content for a café-by-day, bar-by-night concept.",
+    link: "https://lume-bean-bar.vercel.app/",
+    image: "/websites/lumebeanbar.png",
+    category: "Restaurant",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 26,
+    project: "MDS Dental & Aesthetic Clinic",
+    description:
+      "Dental and aesthetic clinic website featuring service showcase, facilities overview, and appointment booking for general dentistry and skin treatments in Batangas.",
+    link: "https://mds-dental.vercel.app/",
+    image: "/websites/mdsdental.png",
+    category: "Booking System",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
 ];
 
 const SolutionsPage: React.FC = () => {
@@ -202,20 +204,6 @@ const SolutionsPage: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
-    slides: {
-      perView: 3,
-      spacing: 15,
-    },
-    breakpoints: {
-      "(max-width: 768px)": {
-        slides: {
-          perView: 1,
-          spacing: 10,
-        },
-      },
-    },
-  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -238,23 +226,22 @@ const SolutionsPage: React.FC = () => {
     };
   }, []);
 
-  // Get unique categories
+  // Unique categories
   const categories = [
     "All",
     ...Array.from(new Set(solutionsdata.map((item) => item.category))),
   ];
 
-  // Filter solutions based on active filter
   const filteredSolutions =
     activeFilter === "All"
       ? solutionsdata
       : solutionsdata.filter((item) => item.category === activeFilter);
+
   const filteredTestimonials =
     activeFilter === "All"
       ? solutionsTestimonials
       : solutionsTestimonials.filter((item) => item.category === activeFilter);
 
-  // Function to handle external link opening
   const handleExternalLink = (url: string, e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
@@ -321,7 +308,6 @@ const SolutionsPage: React.FC = () => {
                   data-tooltip-id={`my-tooltip-${solution.id}`}
                   data-tooltip-content={solution.technologies
                     .slice(3)
-                    .map((newtech) => newtech)
                     .join(", ")}
                   className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-white/20 backdrop-blur-sm text-white/80 text-[10px] 
                     sm:text-xs rounded-full border border-white/20"
@@ -330,7 +316,6 @@ const SolutionsPage: React.FC = () => {
                 </span>
               )}
 
-              {/* tooltip here */}
               <Tooltip id={`my-tooltip-${solution.id}`} />
             </div>
           </div>
@@ -357,7 +342,7 @@ const SolutionsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Button - Now properly handles clicks */}
+          {/* Action Button */}
           <div className="mt-auto pt-2">
             <button
               onClick={(e) => handleExternalLink(solution.link, e)}
@@ -420,7 +405,7 @@ const SolutionsPage: React.FC = () => {
 
       <div
         ref={sectionRef}
-        className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-12 lg:py-20"
+        className="relative min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-12 lg:py-20"
       >
         {/* Background Elements */}
         <div className="absolute inset-0 opacity-30 overflow-hidden">
@@ -517,7 +502,7 @@ const SolutionsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Solutions Grid - Fixed to 4 cards per row */}
+          {/* Solutions Grid */}
           <div className="mb-16">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
               {filteredSolutions.map((solution, index) => (

@@ -95,60 +95,60 @@ const projects: Project[] = [
     url: "https://dmci-agent-website-main.vercel.app/",
     category: "Real Estate",
   },
-  {
-    id: 10,
-    title: "Joe Property Specialist",
-    description:
-      "Personal real estate portfolio showcasing luxury properties and professional real estate services",
-    image: "/websites/joe.png",
-    url: "https://abicrealtyphjoe.com/",
-    category: "Property Specialist",
-  },
-  {
-    id: 11,
-    title: "Kaila Property Specialist",
-    description:
-      "Professional property consultant website with property listings and client management tools",
-    image: "/websites/kaila.png",
-    url: "https://abicrealtyphkaila.com/",
-    category: "Property Specialist",
-  },
-  {
-    id: 12,
-    title: "Angely Property Specialist",
-    description:
-      "Real estate specialist platform featuring premium properties and personalized client services",
-    image: "/websites/angely.png",
-    url: "https://abicrealtyphangely.com/",
-    category: "Property Specialist",
-  },
-  {
-    id: 13,
-    title: "Jayvee Property Specialist",
-    description:
-      "Commercial and residential property specialist with advanced search and inquiry management",
-    image: "/websites/jayvee.png",
-    url: "https://abicrealtyphjayvee.com/",
-    category: "Property Specialist",
-  },
-  {
-    id: 14,
-    title: "Lloyd Property Specialist",
-    description:
-      "Professional real estate consultant website with property showcase and lead generation tools",
-    image: "/websites/lloyd.png",
-    url: "https://abicrealtyphlloyd.com/",
-    category: "Property Specialist",
-  },
-  {
-    id: 15,
-    title: "Janina Property Specialist",
-    description:
-      "Luxury property specialist platform with virtual tours and comprehensive property management",
-    image: "/websites/janina.png",
-    url: "https://abicrealtyphjanina.com/",
-    category: "Property Specialist",
-  },
+  // {
+  //   id: 10,
+  //   title: "Joe Property Specialist",
+  //   description:
+  //     "Personal real estate portfolio showcasing luxury properties and professional real estate services",
+  //   image: "/websites/joe.png",
+  //   url: "https://abicrealtyphjoe.com/",
+  //   category: "Property Specialist",
+  // },
+  // {
+  //   id: 11,
+  //   title: "Kaila Property Specialist",
+  //   description:
+  //     "Professional property consultant website with property listings and client management tools",
+  //   image: "/websites/kaila.png",
+  //   url: "https://abicrealtyphkaila.com/",
+  //   category: "Property Specialist",
+  // },
+  // {
+  //   id: 12,
+  //   title: "Angely Property Specialist",
+  //   description:
+  //     "Real estate specialist platform featuring premium properties and personalized client services",
+  //   image: "/websites/angely.png",
+  //   url: "https://abicrealtyphangely.com/",
+  //   category: "Property Specialist",
+  // },
+  // {
+  //   id: 13,
+  //   title: "Jayvee Property Specialist",
+  //   description:
+  //     "Commercial and residential property specialist with advanced search and inquiry management",
+  //   image: "/websites/jayvee.png",
+  //   url: "https://abicrealtyphjayvee.com/",
+  //   category: "Property Specialist",
+  // },
+  // {
+  //   id: 14,
+  //   title: "Lloyd Property Specialist",
+  //   description:
+  //     "Professional real estate consultant website with property showcase and lead generation tools",
+  //   image: "/websites/lloyd.png",
+  //   url: "https://abicrealtyphlloyd.com/",
+  //   category: "Property Specialist",
+  // },
+  // {
+  //   id: 15,
+  //   title: "Janina Property Specialist",
+  //   description:
+  //     "Luxury property specialist platform with virtual tours and comprehensive property management",
+  //   image: "/websites/janina.png",
+  //   url: "https://abicrealtyphjanina.com/",
+  //   category: "Property Specialist",
+  // },
 ];
 
 const PortfolioShowcase: React.FC = () => {
