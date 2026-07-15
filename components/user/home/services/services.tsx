@@ -1033,25 +1033,14 @@ const Services = () => {
       {activeTab === "branding" && (
         <div>
           <div className="relative">
-            <button
-              onClick={() => scroll("left")}
-              className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
-              aria-label="Scroll left"
-            >
-              <LuChevronLeft className="text-primary" size={20} />
-            </button>
-
-            <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            >
+            <div className="flex gap-3">
               {brandingServices.map((service) => {
                 const isSelected = selectedService === service.name;
                 return (
                   <div
                     key={service.name}
-                    className={`group relative shrink-0 w-[220px] h-32 snap-start overflow-hidden rounded-xl cursor-pointer shadow-md transition-all
-                      ${isSelected ? "ring-2 ring-accent ring-offset-2" : "ring-1 ring-gray-200 hover:shadow-lg"}`}
+                    className={`group relative flex-1 min-w-0 h-32 overflow-hidden rounded-xl cursor-pointer shadow-md transition-all
+            ${isSelected ? "ring-2 ring-accent ring-offset-2" : "ring-1 ring-gray-200 hover:shadow-lg"}`}
                     onClick={() =>
                       setSelectedService(isSelected ? null : service.name)
                     }
@@ -1078,22 +1067,14 @@ const Services = () => {
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-                    <span className="absolute bottom-3 left-3 text-white font-semibold text-sm drop-shadow">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <span className="absolute bottom-0 left-0 right-0 px-2 py-2 text-white font-semibold text-xs sm:text-sm drop-shadow line-clamp-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                       {service.name}
                     </span>
                   </div>
                 );
               })}
             </div>
-
-            <button
-              onClick={() => scroll("right")}
-              className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
-              aria-label="Scroll right"
-            >
-              <LuChevronRight className="text-primary" size={20} />
-            </button>
           </div>
 
           {/* Expanded panel for the selected service */}
@@ -1147,11 +1128,13 @@ const Services = () => {
 
                     {activeService.thumbnailImage ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
-                        <img
-                          src={activeService.thumbnailImage}
-                          alt={activeService.name}
-                          className="w-full h-56 object-contain"
-                        />
+                        <div className="flex items-center justify-center bg-slate-50 rounded-xl h-72 md:h-80 p-4">
+                          <img
+                            src={activeService.thumbnailImage}
+                            alt={activeService.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
                         <div className="grid grid-cols-1 gap-4">
                           {activeService.benefits.map((benefit) => (
                             <div
@@ -1217,11 +1200,13 @@ const Services = () => {
                 ) : (
                   <div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
-                      <img
-                        src={`/images/services/${activeService.image}`}
-                        alt={activeService.name}
-                        className="w-full h-56 object-contain"
-                      />
+                      <div className="flex items-center justify-center bg-slate-50 rounded-xl h-56 md:h-64 p-6">
+                        <img
+                          src={`/images/services/${activeService.image}`}
+                          alt={activeService.name}
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
                       <div>
                         <h4 className="text-primary font-bold text-base mb-2">
                           {activeService.subtitle}
