@@ -6,7 +6,7 @@ import { poetsen_one } from "@/config/fonts";
 import { Testimonial } from "@/components/testimonials/types";
 import TestimonialModal from "@/components/testimonials/TestimonialModal";
 import TestimonialSlider from "@/components/testimonials/TestimonialSlider";
-import ReviewPlatforms from "@/components/testimonials/ReviewPlatforms";
+// import ReviewPlatforms from "@/components/testimonials/ReviewPlatforms";
 import LoadingSkeleton from "@/components/testimonials/LoadingSkeleton";
 import CategoryFilter from "@/components/testimonials/CategoryFilter";
 import TestimonialForm from "@/components/testimonials/TestimonialForm";
@@ -99,7 +99,7 @@ export default function TestimonialsPage() {
 
           <Divider className="my-12" />
 
-          <ReviewPlatforms />
+          {/* <ReviewPlatforms /> */}
 
           <Divider className="my-12" />
 

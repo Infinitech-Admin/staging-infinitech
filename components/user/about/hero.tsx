@@ -47,7 +47,7 @@ const Hero = () => {
       <div>
         <Image
           src="/about.jpg"
-          className="w-[62.5rem] h-[31.25rem] object-cover overflow-hidden rounded-tr-[150px] rounded-bl-[150px] border-b-8 border-b-primary border-l-8 border-l-accent border-t-8 border-t-primary border-r-8 border-r-accent"
+          className="w-full max-w-[45rem] h-auto object-contain overflow-hidden rounded-tr-[150px] rounded-bl-[150px] border-b-8 border-b-primary border-l-8 border-l-accent border-t-8 border-t-primary border-r-8 border-r-accent"
         />
       </div>
     </div>
