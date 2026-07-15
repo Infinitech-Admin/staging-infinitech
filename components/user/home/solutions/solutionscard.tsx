@@ -113,7 +113,7 @@ const solutionsdata: Solution[] = [
     description:
       "Photography and videography studio website showcasing portfolio galleries, service packages, and booking inquiries for creative shoots.",
     link: "https://www.g-limitstudio.com/",
-    image: "/websites/glimitstudio.png",
+    image: "/websites/g-limit.png",
     category: "Photography & Videography",
     technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
   },
