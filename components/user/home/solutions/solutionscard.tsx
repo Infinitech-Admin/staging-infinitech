@@ -197,6 +197,36 @@ const solutionsdata: Solution[] = [
     category: "Booking System",
     technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
   },
+  {
+    id: 27,
+    project: "Barangay Pamplona Tres",
+    description:
+      "Official barangay government website providing resident services, certificate requests, announcements, and contact information for local officials in Las Piñas City.",
+    link: "https://pamplonatres.vercel.app/",
+    image: "/websites/pamplonatres.png",
+    category: "Government",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 28,
+    project: "JuanTap",
+    description:
+      "Digital business card platform enabling instant profile sharing via QR code and NFC, with customizable templates, social media integration, and analytics.",
+    link: "https://www.juantap.info/",
+    image: "/websites/juantap.png",
+    category: "Digital Business Card",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
+  {
+    id: 29,
+    project: "Verdant Homeowners Portal",
+    description:
+      "Homeowners association platform providing residents with community announcements, billing, and service requests for a subdivision community management system.",
+    link: "https://verdant-home-owner.vercel.app/",
+    image: "/websites/verdant.png",
+    category: "Community Management",
+    technologies: ["Next.js", "Laravel", "MySQL", "Tailwind CSS", "TypeScript"],
+  },
 ];
 
 const SolutionsPage: React.FC = () => {
