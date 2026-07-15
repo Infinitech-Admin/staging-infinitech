@@ -1005,13 +1005,13 @@ function BrandingSection({
       </div>
 
       <div className="relative">
-        <button
+        {/* <button
           onClick={() => scroll("left")}
           className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
           aria-label="Scroll left"
         >
           <LuChevronLeft className="text-primary" size={20} />
-        </button>
+        </button> */}
 
         <div
           ref={scrollRef}
@@ -1059,13 +1059,13 @@ function BrandingSection({
           })}
         </div>
 
-        <button
+        {/* <button
           onClick={() => scroll("right")}
           className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
           aria-label="Scroll right"
         >
           <LuChevronRight className="text-primary" size={20} />
-        </button>
+        </button> */}
       </div>
 
       {activeService && (
