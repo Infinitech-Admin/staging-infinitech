@@ -16,6 +16,25 @@ import {
   FaBriefcase,
   FaShoppingCart,
   FaSearchDollar,
+  FaShieldAlt,
+  FaBullseye,
+  FaChartLine,
+  FaLightbulb,
+  FaMoneyBillWave,
+  FaClock,
+  FaHashtag,
+  FaCalendarAlt,
+  FaChartBar,
+  FaBullhorn,
+  FaStore,
+  FaBoxOpen,
+  FaVideo,
+  FaSearch,
+  FaMapMarkerAlt,
+  FaTrophy,
+  FaEye,
+  FaCrosshairs,
+  FaSlidersH,
 } from "react-icons/fa";
 import { MdOutlineSpeed } from "react-icons/md";
 
@@ -33,8 +52,10 @@ const packages = [
     popular: false,
     features: [
       "Up to 5 pages",
-      "Simple contact form",
-      "1-year domain and hosting",
+      "Social Media Links integration",
+      "Simple Contact Form",
+      "Email Alerts for Form Inquiries",
+      "1-Year Domain and Hosting",
     ],
   },
   {
@@ -44,9 +65,12 @@ const packages = [
     popular: true,
     features: [
       "Everything in Standard, plus:",
-      "Up to 10 pages",
-      "Client login dashboard",
-      "Smart chat system",
+      "Up to 10 Website Pages",
+      "Dashboard Login for Clients",
+      "Traffic Insights & Analytics",
+      "Enhanced Site Customization",
+      "Smart Chat System",
+      "Design Upgrade",
     ],
   },
   {
@@ -55,10 +79,12 @@ const packages = [
     icon: FaBriefcase,
     popular: false,
     features: [
-      "SEO Pro Setup",
-      "eCommerce-ready product catalog",
-      "Upgraded motion & animation",
-      "Video testimonials section",
+      "SEO Pro Setup + Dashboard Reports",
+      "eCommerce-Ready Products Catalog",
+      "Admin Staff & Client Management",
+      "Upgraded Motion & Animation Website",
+      "Lead Form With Dashboard Tracking",
+      "Video Testimonials Section",
     ],
   },
   {
@@ -67,68 +93,300 @@ const packages = [
     icon: FaShoppingCart,
     popular: false,
     features: [
-      "Full eCommerce system",
-      "Booking calendar & tools",
-      "Real-time notifications",
-      "VIP priority support",
+      "Advanced Conversion Tracking",
+      "Full eCommerce System",
+      "Booking Calendar & Tools",
+      "Real-Time Notifications System",
+      "VIP Priority Support (Phone, Chat, Email)",
+      "Dashboard for Clients",
     ],
   },
 ];
 
-// Each service has a cover image + a small gallery shown when the card is clicked
-const brandingServices = [
+const researchBenefits = [
   {
-    name: "Social Media",
-    image: "https://placehold.co/400x300/f59e0b/f59e0b",
-    gallery: [
-      "https://placehold.co/300x200/fbbf24/fbbf24",
-      "https://placehold.co/300x200/f59e0b/f59e0b",
-      "https://placehold.co/300x200/d97706/d97706",
+    title: "Avoid Costly Mistakes",
+    description: "Know your market before you spend on it.",
+    icon: FaShieldAlt,
+    color: "#ef4444",
+  },
+  {
+    title: "Know Your Audience",
+    description: "Understand who's buying and why.",
+    icon: FaBullseye,
+    color: "#0ea5e9",
+  },
+  {
+    title: "Outsmart Competitors",
+    description: "See what's working for others in your space.",
+    icon: FaChartLine,
+    color: "#f59e0b",
+  },
+  {
+    title: "Make Confident Decisions",
+    description: "Back your next move with real data.",
+    icon: FaLightbulb,
+    color: "#8b5cf6",
+  },
+  {
+    title: "Save Money Long-Term",
+    description: "Invest only where the data says it pays off.",
+    icon: FaMoneyBillWave,
+    color: "#10b981",
+  },
+  {
+    title: "Move Faster",
+    description: "Skip guesswork and launch with clarity.",
+    icon: FaClock,
+    color: "#f43f5e",
+  },
+];
+
+// JuanTap: digital business card platform — illustrate a tappable NFC card
+const JuanTapIllustration = () => (
+  <svg viewBox="0 0 400 300" className="absolute inset-0 h-full w-full">
+    <rect width="400" height="300" fill="#7c3aed" />
+    {/* business card */}
+    <rect
+      x="110"
+      y="95"
+      width="180"
+      height="110"
+      rx="12"
+      fill="#ffffff"
+      transform="rotate(-6 200 150)"
+    />
+    <circle
+      cx="150"
+      cy="130"
+      r="16"
+      fill="#8b5cf6"
+      transform="rotate(-6 200 150)"
+    />
+    <rect
+      x="175"
+      y="122"
+      width="70"
+      height="7"
+      rx="3.5"
+      fill="#a78bfa"
+      transform="rotate(-6 200 150)"
+    />
+    <rect
+      x="175"
+      y="136"
+      width="50"
+      height="6"
+      rx="3"
+      fill="#ddd6fe"
+      transform="rotate(-6 200 150)"
+    />
+    <rect
+      x="130"
+      y="165"
+      width="120"
+      height="6"
+      rx="3"
+      fill="#ede9fe"
+      transform="rotate(-6 200 150)"
+    />
+    <rect
+      x="130"
+      y="178"
+      width="90"
+      height="6"
+      rx="3"
+      fill="#ede9fe"
+      transform="rotate(-6 200 150)"
+    />
+    {/* NFC tap waves */}
+    <path
+      d="M275 70 Q305 100 275 130"
+      stroke="#ffffff"
+      strokeWidth="6"
+      fill="none"
+      strokeLinecap="round"
+      opacity="0.9"
+    />
+    <path
+      d="M292 55 Q332 100 292 145"
+      stroke="#ffffff"
+      strokeWidth="6"
+      fill="none"
+      strokeLinecap="round"
+      opacity="0.6"
+    />
+    {/* tap point */}
+    <circle cx="245" cy="100" r="6" fill="#fbbf24" />
+  </svg>
+);
+
+// Services that show real sample work (photo gallery)
+interface IconProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+interface BenefitItem {
+  icon: React.ComponentType<IconProps>;
+  title: string;
+  description: string;
+}
+
+interface BenefitsService {
+  name: string;
+  type: "benefits";
+  icon: React.ComponentType<IconProps>;
+  color: string;
+  tagline: string;
+  benefits: BenefitItem[];
+}
+
+interface GalleryService {
+  name: string;
+  type: "gallery";
+  image?: string;
+  illustration?: React.ComponentType;
+  gallery: string[];
+}
+
+type BrandingService = BenefitsService | GalleryService;
+
+const brandingServices: BrandingService[] = [
+  {
+    name: "Social Media Management",
+    type: "benefits",
+    icon: FaHashtag,
+    color: "#0ea5e9",
+    tagline: "Consistent content, real engagement.",
+    benefits: [
+      {
+        icon: FaCalendarAlt,
+        title: "Content Calendar",
+        description: "Planned posts so your pages never go quiet.",
+      },
+      {
+        icon: FaChartBar,
+        title: "Analytics & Reporting",
+        description: "See what's working with monthly performance reports.",
+      },
+      {
+        icon: FaBullseye,
+        title: "Better Engagement",
+        description: "Content built to get likes, shares, and comments.",
+      },
+      {
+        icon: FaClock,
+        title: "Save Your Time",
+        description: "We handle posting so you can focus on the business.",
+      },
     ],
   },
   {
-    name: "TikTok Shop",
-    image: "https://placehold.co/400x300/f43f5e/f43f5e",
-    gallery: [
-      "https://placehold.co/300x200/fb7185/fb7185",
-      "https://placehold.co/300x200/f43f5e/f43f5e",
-      "https://placehold.co/300x200/e11d48/e11d48",
+    name: "TikTok Shop Opening",
+    type: "benefits",
+    icon: FaStore,
+    color: "#f43f5e",
+    tagline: "Get your shop live and selling fast.",
+    benefits: [
+      {
+        icon: FaStore,
+        title: "Fast Store Setup",
+        description: "We register and configure your shop end-to-end.",
+      },
+      {
+        icon: FaBoxOpen,
+        title: "Product Listing Optimization",
+        description: "Titles, photos, and pricing built to convert.",
+      },
+      {
+        icon: FaVideo,
+        title: "Live Selling Guidance",
+        description: "Learn how to run live selling sessions that sell.",
+      },
+      {
+        icon: FaChartBar,
+        title: "Sales Tracking",
+        description: "Monitor orders and performance from day one.",
+      },
     ],
   },
   {
-    name: "Photo & Video",
-    image: "https://placehold.co/400x300/06b6d4/06b6d4",
+    name: "Photography & Videography",
+    type: "gallery",
+    image: "https://picsum.photos/seed/photography-videography-svc/400/300",
     gallery: [
-      "https://placehold.co/300x200/22d3ee/22d3ee",
-      "https://placehold.co/300x200/06b6d4/06b6d4",
-      "https://placehold.co/300x200/0891b2/0891b2",
+      "https://picsum.photos/seed/photography-videography-1/300/200",
+      "https://picsum.photos/seed/photography-videography-2/300/200",
+      "https://picsum.photos/seed/photography-videography-3/300/200",
     ],
   },
   {
     name: "SEO",
-    image: "https://placehold.co/400x300/10b981/10b981",
-    gallery: [
-      "https://placehold.co/300x200/34d399/34d399",
-      "https://placehold.co/300x200/10b981/10b981",
-      "https://placehold.co/300x200/059669/059669",
+    type: "benefits",
+    icon: FaSearch,
+    color: "#059669",
+    tagline: "Get found by the people already searching for you.",
+    benefits: [
+      {
+        icon: FaTrophy,
+        title: "Higher Search Rankings",
+        description: "Rank where your customers are already looking.",
+      },
+      {
+        icon: FaChartLine,
+        title: "Long-Term Organic Traffic",
+        description: "Consistent visitors without paying per click.",
+      },
+      {
+        icon: FaMapMarkerAlt,
+        title: "Better Local Visibility",
+        description: "Show up in local searches and Google Maps.",
+      },
+      {
+        icon: FaShieldAlt,
+        title: "Competitive Edge",
+        description: "Outrank competitors still ignoring their SEO.",
+      },
     ],
   },
   {
     name: "JuanTap",
-    image: "https://placehold.co/400x300/8b5cf6/8b5cf6",
+    type: "gallery",
+    illustration: JuanTapIllustration,
     gallery: [
-      "https://placehold.co/300x200/a78bfa/a78bfa",
-      "https://placehold.co/300x200/8b5cf6/8b5cf6",
-      "https://placehold.co/300x200/7c3aed/7c3aed",
+      "https://picsum.photos/seed/juantap-business-card-1/300/200",
+      "https://picsum.photos/seed/juantap-business-card-2/300/200",
+      "https://picsum.photos/seed/juantap-business-card-3/300/200",
     ],
   },
   {
     name: "Paid Ads",
-    image: "https://placehold.co/400x300/ef4444/ef4444",
-    gallery: [
-      "https://placehold.co/300x200/f87171/f87171",
-      "https://placehold.co/300x200/ef4444/ef4444",
-      "https://placehold.co/300x200/dc2626/dc2626",
+    type: "benefits",
+    icon: FaBullhorn,
+    color: "#f59e0b",
+    tagline: "Put your brand in front of the right people, fast.",
+    benefits: [
+      {
+        icon: FaEye,
+        title: "Immediate Visibility",
+        description: "Get seen the moment your campaign goes live.",
+      },
+      {
+        icon: FaCrosshairs,
+        title: "Targeted Reach",
+        description: "Ads shown to the audience most likely to buy.",
+      },
+      {
+        icon: FaChartBar,
+        title: "Measurable ROI",
+        description: "Track every peso spent against real results.",
+      },
+      {
+        icon: FaSlidersH,
+        title: "Scalable Budget Control",
+        description: "Start small and scale up what performs.",
+      },
     ],
   },
 ];
@@ -203,7 +461,7 @@ const Services = () => {
                 <p className="text-2xl font-black text-white mt-1 mb-4">
                   ₱{pkg.price}
                   <span className="text-sm font-medium text-slate-400">
-                    /mo
+                    /month
                   </span>
                 </p>
 
@@ -215,31 +473,11 @@ const Services = () => {
                     </div>
                   ))}
                 </div>
-
-                <Button
-                  size="sm"
-                  className="mt-4 w-full bg-accent text-white font-medium"
-                  onPress={() => router.push("/contact")}
-                >
-                  Choose {pkg.name}
-                </Button>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-5 mb-8">
-            <MdOutlineSpeed className="h-8 w-8 text-accent shrink-0" />
-            <div>
-              <h3 className="text-primary font-semibold">
-                Website Audit & Optimization
-              </h3>
-              <p className="text-gray-500 text-sm">
-                Already have a site? We'll improve speed, SEO, and UX.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
@@ -247,6 +485,13 @@ const Services = () => {
             >
               Get a Free Quote
             </Button>
+            <button
+              onClick={() => router.push("/contact")}
+              className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
+            >
+              <MdOutlineSpeed className="h-4 w-4 text-accent" />
+              Already have a site? Get a Website Audit
+            </button>
           </div>
         </div>
       )}
@@ -254,14 +499,45 @@ const Services = () => {
       {/* MARKET RESEARCH */}
       {activeTab === "research" && (
         <div>
-          <div className="max-w-2xl mx-auto rounded-xl border border-gray-100 bg-white p-8 text-center mb-8">
-            <FaSearchDollar className="mx-auto h-10 w-10 text-accent mb-4" />
-            <h3 className="text-primary font-bold text-xl mb-2">
+          <div className="max-w-2xl mx-auto rounded-2xl bg-gradient-to-br from-primary to-slate-900 p-8 text-center mb-6 shadow-lg shadow-primary/20">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
+              <FaSearchDollar className="h-8 w-8 text-accent-light" />
+            </div>
+            <h3 className="text-white font-bold text-xl mb-2">
               Market Research Report
             </h3>
-            <p className="text-gray-500">
+            <p className="text-slate-300">
               Data-backed insights on your market, competitors, and audience.
             </p>
+          </div>
+
+          <div className="text-center mb-6">
+            <h4 className="text-primary font-bold text-lg">
+              As Our Client, Here's What You Gain
+            </h4>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 rounded-2xl bg-slate-50 p-4 sm:p-6">
+            {researchBenefits.map((benefit) => (
+              <div
+                key={benefit.title}
+                className="rounded-xl bg-white p-5 text-center shadow-sm ring-1 ring-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all"
+              >
+                <div
+                  className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `${benefit.color}1a` }}
+                >
+                  <benefit.icon
+                    className="h-6 w-6"
+                    style={{ color: benefit.color }}
+                  />
+                </div>
+                <h3 className="text-primary font-semibold text-sm mb-1">
+                  {benefit.title}
+                </h3>
+                <p className="text-gray-500 text-xs">{benefit.description}</p>
+              </div>
+            ))}
           </div>
 
           <div className="flex justify-center">
@@ -297,17 +573,30 @@ const Services = () => {
                 return (
                   <div
                     key={service.name}
-                    className={`group relative shrink-0 w-[220px] h-32 snap-start overflow-hidden rounded-xl border cursor-pointer shadow-sm transition-all
-                      ${isSelected ? "border-accent ring-2 ring-accent" : "border-gray-200"}`}
+                    className={`group relative shrink-0 w-[220px] h-32 snap-start overflow-hidden rounded-xl cursor-pointer shadow-md transition-all
+                      ${isSelected ? "ring-2 ring-accent ring-offset-2" : "ring-1 ring-gray-200 hover:shadow-lg"}`}
                     onClick={() =>
                       setSelectedService(isSelected ? null : service.name)
                     }
                   >
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {service.type === "benefits" ? (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${service.color}, ${service.color}cc)`,
+                        }}
+                      >
+                        <service.icon className="h-10 w-10 text-white/90" />
+                      </div>
+                    ) : service.illustration ? (
+                      <service.illustration />
+                    ) : (
+                      <img
+                        src={service.image}
+                        alt={service.name}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
                     <span className="absolute bottom-3 left-3 text-white font-semibold text-sm drop-shadow">
                       {service.name}
@@ -328,34 +617,98 @@ const Services = () => {
 
           {/* Expanded gallery panel for the selected service */}
           {activeService && (
-            <div className="mt-6 rounded-xl border border-gray-100 bg-white p-5 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-primary font-bold text-lg">
-                  {activeService.name} — Sample Work
-                </h3>
-                <button
-                  onClick={() => setSelectedService(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                  aria-label="Close"
-                >
-                  <LuX size={20} />
-                </button>
-              </div>
+            <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div
+                className="h-1.5 w-full"
+                style={{
+                  background:
+                    activeService.type === "benefits"
+                      ? activeService.color
+                      : "#f59e0b",
+                }}
+              />
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    {activeService.type === "benefits" && (
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-full shrink-0"
+                        style={{ backgroundColor: `${activeService.color}1a` }}
+                      >
+                        <activeService.icon
+                          className="h-5 w-5"
+                          style={{ color: activeService.color }}
+                        />
+                      </div>
+                    )}
+                    <h3 className="text-primary font-bold text-lg">
+                      {activeService.type === "benefits"
+                        ? `${activeService.name} — What You Get`
+                        : `${activeService.name} — Sample Work`}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedService(null)}
+                    className="text-gray-400 hover:text-gray-600 shrink-0"
+                    aria-label="Close"
+                  >
+                    <LuX size={20} />
+                  </button>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {activeService.gallery.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`${activeService.name} sample ${idx + 1}`}
-                    className="w-full h-40 object-cover rounded-lg"
-                  />
-                ))}
+                {activeService.type === "benefits" ? (
+                  <div>
+                    {activeService.tagline && (
+                      <p className="text-gray-500 text-sm mb-4">
+                        {activeService.tagline}
+                      </p>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {activeService.benefits.map((benefit) => (
+                        <div
+                          key={benefit.title}
+                          className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                        >
+                          <div
+                            className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                            style={{
+                              backgroundColor: `${activeService.color}1a`,
+                            }}
+                          >
+                            <benefit.icon
+                              className="h-4.5 w-4.5"
+                              style={{ color: activeService.color }}
+                            />
+                          </div>
+                          <div>
+                            <h4 className="text-primary font-semibold text-sm">
+                              {benefit.title}
+                            </h4>
+                            <p className="text-gray-500 text-xs mt-0.5">
+                              {benefit.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {activeService.gallery.map((img: string, idx: number) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`${activeService.name} sample ${idx + 1}`}
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          <div className="flex justify-center mt-8">
+          {/* <div className="flex justify-center mt-8">
             <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
@@ -363,7 +716,7 @@ const Services = () => {
             >
               Grow My Brand
             </Button>
-          </div>
+          </div> */}
         </div>
       )}
     </section>
