@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Button } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import {
   LuArrowRight,
@@ -37,6 +37,8 @@ import {
   FaSlidersH,
 } from "react-icons/fa";
 import { MdOutlineSpeed } from "react-icons/md";
+import RequestReportModal from "@/components/RequestReportModal";
+import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
 
 const mainCategories = [
   { key: "website", title: "Website Solutions" },
@@ -394,8 +396,24 @@ const brandingServices: BrandingService[] = [
 const Services = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("website");
-  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string | null>(
+    brandingServices[0]?.name ?? null,
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Request a Report modal
+  const {
+    isOpen: isReportOpen,
+    onOpen: onReportOpen,
+    onOpenChange: onReportOpenChange,
+  } = useDisclosure();
+
+  // Request a Website Audit modal
+  const {
+    isOpen: isAuditOpen,
+    onOpen: onAuditOpen,
+    onOpenChange: onAuditOpenChange,
+  } = useDisclosure();
 
   const scroll = (dir: "left" | "right") => {
     scrollRef.current?.scrollBy({
@@ -481,12 +499,12 @@ const Services = () => {
             <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
-              onPress={() => router.push("/contact")}
+              onPress={() => router.push("/quote")}
             >
               Get a Free Quote
             </Button>
             <button
-              onClick={() => router.push("/contact")}
+              onClick={onAuditOpen}
               className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
             >
               <MdOutlineSpeed className="h-4 w-4 text-accent" />
@@ -544,7 +562,7 @@ const Services = () => {
             <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
-              onPress={() => router.push("/contact")}
+              onPress={onReportOpen}
             >
               Request a Report
             </Button>
@@ -707,18 +725,17 @@ const Services = () => {
               </div>
             </div>
           )}
-
-          {/* <div className="flex justify-center mt-8">
-            <Button
-              className="bg-accent text-white font-medium"
-              endContent={<LuArrowRight size={18} />}
-              onPress={() => router.push("/contact")}
-            >
-              Grow My Brand
-            </Button>
-          </div> */}
         </div>
       )}
+
+      <RequestReportModal
+        isOpen={isReportOpen}
+        onOpenChange={onReportOpenChange}
+      />
+      <RequestWebsiteAuditModal
+        isOpen={isAuditOpen}
+        onOpenChange={onAuditOpenChange}
+      />
     </section>
   );
 };

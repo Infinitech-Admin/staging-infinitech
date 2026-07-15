@@ -7,7 +7,12 @@ import { GoDotFill, GoCheck } from "react-icons/go";
 import { poetsen_one } from "@/config/fonts";
 import { useRouter } from "next/navigation";
 
-const trustPoints = ["20+ Projects", "Fast Turnaround", "Affordable Pricing"];
+const trustPoints = [
+  "20+ Projects",
+  "All Services, One Team",
+  "Fast Turnaround",
+  "Affordable Pricing",
+];
 
 const Left = () => {
   const router = useRouter();
@@ -21,16 +26,18 @@ const Left = () => {
           variant="bordered"
           color="warning"
         >
-          Trusted Digital Solutions
+          Your One-Stop Digital Partner
         </Chip>
 
         <h1
           className={`text-accent text-5xl sm:text-7xl font-bold leading-tight ${poetsen_one.className}`}
         >
-          Websites That <br /> Grow Your Business
+          One-Stop Solutions <br /> To Grow Your Business
         </h1>
 
-        <p className="md:text-lg text-gray-400">Web • Apps • SEO • Branding</p>
+        <p className="md:text-lg text-gray-400">
+          Website • Research • Branding • Marketing
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-4 pt-2">
