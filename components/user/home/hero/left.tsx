@@ -20,14 +20,14 @@ const Left = () => {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <Chip
+        {/* <Chip
           className="hidden md:flex"
           startContent={<GoDotFill />}
           variant="bordered"
           color="warning"
         >
           Your One-Stop Digital Partner
-        </Chip>
+        </Chip> */}
 
         <h1
           className={`text-accent text-5xl sm:text-7xl font-bold leading-tight ${poetsen_one.className}`}
@@ -55,7 +55,7 @@ const Left = () => {
           size="lg"
           variant="bordered"
           className="border-accent text-accent-light font-medium hover:bg-white/10 transition"
-          onPress={() => router.push("/portfolio")}
+          onPress={() => router.push("/solutions")}
         >
           View Our Work
         </Button>

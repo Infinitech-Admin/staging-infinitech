@@ -2,7 +2,12 @@
 
 import React, { useState, useRef } from "react";
 import { Button, useDisclosure } from "@heroui/react";
+import { Button as ShadButton } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { Loader2, Search } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import VideoSurveyForm from "@/components/video-survey-form";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -29,9 +34,6 @@ import {
   FaStore,
   FaBoxOpen,
   FaVideo,
-  FaSearch,
-  FaMapMarkerAlt,
-  FaTrophy,
   FaEye,
   FaCrosshairs,
   FaSlidersH,
@@ -105,6 +107,145 @@ const packages = [
   },
 ];
 
+// Market Research: illustrate a data dashboard being examined — mirrors the
+// flat, blue/orange illustration style used by the branding service images.
+const MarketResearchIllustration = () => (
+  <div className="w-full aspect-video rounded-xl overflow-hidden">
+    <svg viewBox="0 0 640 360" className="w-full h-full block">
+      <rect width="640" height="360" fill="#0d1b3e" />
+
+      {/* dashboard card */}
+      <rect
+        x="40"
+        y="45"
+        width="370"
+        height="270"
+        rx="14"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <rect
+        x="40"
+        y="45"
+        width="370"
+        height="270"
+        rx="14"
+        fill="none"
+        stroke="#f5a623"
+        strokeWidth="1.5"
+        opacity="0.4"
+      />
+
+      {/* bars */}
+      <rect x="70" y="195" width="30" height="95" rx="5" fill="#38bdf8" />
+      <rect
+        x="115"
+        y="165"
+        width="30"
+        height="125"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+      <rect x="160" y="120" width="30" height="170" rx="5" fill="#f5a623" />
+      <rect
+        x="205"
+        y="150"
+        width="30"
+        height="140"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+      <rect x="250" y="95" width="30" height="195" rx="5" fill="#f5a623" />
+      <rect
+        x="295"
+        y="115"
+        width="30"
+        height="175"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+
+      {/* trend line */}
+      <polyline
+        points="85,185 130,155 175,110 220,135 265,85 310,100"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.85"
+      />
+      <circle cx="310" cy="100" r="5" fill="#ffffff" />
+
+      {/* magnifying glass — fully inside the card bounds, no clipping */}
+      <circle
+        cx="345"
+        cy="240"
+        r="38"
+        fill="#0d1b3e"
+        stroke="#f5a623"
+        strokeWidth="6"
+      />
+      <circle
+        cx="345"
+        cy="240"
+        r="27"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2"
+        opacity="0.5"
+      />
+      <line
+        x1="371"
+        y1="266"
+        x2="400"
+        y2="295"
+        stroke="#f5a623"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <text x="333" y="247" fontSize="22" fill="#ffffff" fontWeight="bold">
+        $
+      </text>
+
+      {/* right-side stat panels */}
+      <rect
+        x="430"
+        y="45"
+        width="170"
+        height="110"
+        rx="12"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <text x="452" y="95" fontSize="30" fontWeight="bold" fill="#f5a623">
+        +142%
+      </text>
+      <text x="452" y="120" fontSize="14" fill="#ffffff" opacity="0.7">
+        Market Growth
+      </text>
+
+      <rect
+        x="430"
+        y="170"
+        width="170"
+        height="110"
+        rx="12"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <text x="452" y="220" fontSize="30" fontWeight="bold" fill="#38bdf8">
+        3.2x
+      </text>
+      <text x="452" y="245" fontSize="14" fill="#ffffff" opacity="0.7">
+        Audience Insight
+      </text>
+    </svg>
+  </div>
+);
 const researchBenefits = [
   {
     title: "Avoid Costly Mistakes",
@@ -144,97 +285,28 @@ const researchBenefits = [
   },
 ];
 
-// JuanTap: digital business card platform — illustrate a tappable NFC card
-const JuanTapIllustration = () => (
-  <svg viewBox="0 0 400 300" className="absolute inset-0 h-full w-full">
-    <rect width="400" height="300" fill="#7c3aed" />
-    {/* business card */}
-    <rect
-      x="110"
-      y="95"
-      width="180"
-      height="110"
-      rx="12"
-      fill="#ffffff"
-      transform="rotate(-6 200 150)"
-    />
-    <circle
-      cx="150"
-      cy="130"
-      r="16"
-      fill="#8b5cf6"
-      transform="rotate(-6 200 150)"
-    />
-    <rect
-      x="175"
-      y="122"
-      width="70"
-      height="7"
-      rx="3.5"
-      fill="#a78bfa"
-      transform="rotate(-6 200 150)"
-    />
-    <rect
-      x="175"
-      y="136"
-      width="50"
-      height="6"
-      rx="3"
-      fill="#ddd6fe"
-      transform="rotate(-6 200 150)"
-    />
-    <rect
-      x="130"
-      y="165"
-      width="120"
-      height="6"
-      rx="3"
-      fill="#ede9fe"
-      transform="rotate(-6 200 150)"
-    />
-    <rect
-      x="130"
-      y="178"
-      width="90"
-      height="6"
-      rx="3"
-      fill="#ede9fe"
-      transform="rotate(-6 200 150)"
-    />
-    {/* NFC tap waves */}
-    <path
-      d="M275 70 Q305 100 275 130"
-      stroke="#ffffff"
-      strokeWidth="6"
-      fill="none"
-      strokeLinecap="round"
-      opacity="0.9"
-    />
-    <path
-      d="M292 55 Q332 100 292 145"
-      stroke="#ffffff"
-      strokeWidth="6"
-      fill="none"
-      strokeLinecap="round"
-      opacity="0.6"
-    />
-    {/* tap point */}
-    <circle cx="245" cy="100" r="6" fill="#fbbf24" />
-  </svg>
-);
+/* ============================================================================
+ * BRANDING & MARKETING — upgraded data shape
+ * "benefits" cards = simple 4-benefit tiles (with an optional real thumbnail
+ * image shown side-by-side). "detail" cards = image + subtitle + description
+ * + category grid, same shape as the full Services page, with optional
+ * CTA buttons and/or the Free SEO Audit lead-gen form.
+ * ========================================================================== */
 
-// Services that show real sample work (photo gallery)
 interface IconProps {
   className?: string;
   style?: React.CSSProperties;
 }
-
 interface BenefitItem {
   icon: React.ComponentType<IconProps>;
   title: string;
   description: string;
 }
-
+interface ServiceCategory {
+  id: number;
+  name: string;
+  description: string;
+}
 interface BenefitsService {
   name: string;
   type: "benefits";
@@ -242,17 +314,80 @@ interface BenefitsService {
   color: string;
   tagline: string;
   benefits: BenefitItem[];
+  thumbnailImage?: string;
+  showSEOAuditForm?: boolean;
 }
-
-interface GalleryService {
+interface DetailService {
   name: string;
-  type: "gallery";
-  image?: string;
-  illustration?: React.ComponentType;
-  gallery: string[];
+  type: "detail";
+  image: string;
+  subtitle: string;
+  description: string;
+  categories: ServiceCategory[];
+  ctas?: readonly ServiceCtaKey[];
+  showSEOAuditForm?: boolean;
+}
+type BrandingService = BenefitsService | DetailService;
+
+type ServiceCtaKey = "websiteAudit" | "videoSurvey";
+
+interface ServiceCtaConfigEntry {
+  label: string;
+  kind: "primary" | "secondary";
 }
 
-type BrandingService = BenefitsService | GalleryService;
+const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
+  videoSurvey: { label: "Take Video Survey", kind: "primary" },
+  websiteAudit: {
+    label: "Already have a site? Get a Website Audit",
+    kind: "secondary",
+  },
+};
+
+function ServiceCtaButtons({
+  ctas,
+  onVideoSurvey,
+  onWebsiteAudit,
+  className = "mt-6 flex flex-wrap gap-3",
+}: {
+  ctas: readonly ServiceCtaKey[] | undefined;
+  onVideoSurvey: () => void;
+  onWebsiteAudit: () => void;
+  className?: string;
+}) {
+  if (!ctas || ctas.length === 0) return null;
+
+  return (
+    <div className={className}>
+      {ctas.map((ctaKey) => {
+        const cta = serviceCtaConfig[ctaKey];
+        if (ctaKey === "videoSurvey") {
+          return (
+            <ShadButton
+              key={ctaKey}
+              onClick={onVideoSurvey}
+              className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              {cta.label}
+            </ShadButton>
+          );
+        }
+        if (ctaKey === "websiteAudit") {
+          return (
+            <button
+              key={ctaKey}
+              onClick={onWebsiteAudit}
+              className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
+            >
+              {cta.label}
+            </button>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+}
 
 const brandingServices: BrandingService[] = [
   {
@@ -261,6 +396,7 @@ const brandingServices: BrandingService[] = [
     icon: FaHashtag,
     color: "#0ea5e9",
     tagline: "Consistent content, real engagement.",
+    thumbnailImage: "/images/services/marketing.svg",
     benefits: [
       {
         icon: FaCalendarAlt,
@@ -290,6 +426,7 @@ const brandingServices: BrandingService[] = [
     icon: FaStore,
     color: "#f43f5e",
     tagline: "Get your shop live and selling fast.",
+    thumbnailImage: "/tiktokshop.png",
     benefits: [
       {
         icon: FaStore,
@@ -315,51 +452,101 @@ const brandingServices: BrandingService[] = [
   },
   {
     name: "Photography & Videography",
-    type: "gallery",
-    image: "https://picsum.photos/seed/photography-videography-svc/400/300",
-    gallery: [
-      "https://picsum.photos/seed/photography-videography-1/300/200",
-      "https://picsum.photos/seed/photography-videography-2/300/200",
-      "https://picsum.photos/seed/photography-videography-3/300/200",
+    type: "detail",
+    image: "photo_video.png",
+    subtitle: "Capturing Moments That Tell Your Story",
+    description: `Our professional photography and videography services bring your brand to life through compelling visual content. From product shoots to promotional videos, we create stunning media that resonates with your audience and elevates your brand presence.`,
+    ctas: ["videoSurvey"] as const,
+    categories: [
+      {
+        id: 1,
+        name: "Wedding",
+        description:
+          "Capturing the beauty and emotions of weddings with timeless, cinematic imagery.",
+      },
+      {
+        id: 2,
+        name: "Portrait",
+        description:
+          "Professional portraits that highlight personality, style, and character.",
+      },
+      {
+        id: 3,
+        name: "Event",
+        description:
+          "Coverage of corporate, social, and private events with storytelling visuals.",
+      },
+      {
+        id: 4,
+        name: "Product",
+        description:
+          "High-quality product photography for e-commerce, catalogs, and marketing campaigns.",
+      },
+      {
+        id: 5,
+        name: "Commercial & Branding",
+        description:
+          "Visuals that strengthen brand identity and support marketing strategies.",
+      },
+      {
+        id: 6,
+        name: "Headshots",
+        description:
+          "Clean, professional headshots for business, LinkedIn, and personal branding.",
+      },
     ],
   },
   {
     name: "SEO",
-    type: "benefits",
-    icon: FaSearch,
-    color: "#059669",
-    tagline: "Get found by the people already searching for you.",
-    benefits: [
+    type: "detail",
+    image: "seo.svg",
+    subtitle: "Boost Your Online Visibility with SEO",
+    description: `Our SEO strategies help improve your website's search engine rankings, driving more organic traffic and increasing your online presence. Let us optimize your site and ensure it reaches the right audience.`,
+    showSEOAuditForm: true,
+    categories: [
       {
-        icon: FaTrophy,
-        title: "Higher Search Rankings",
-        description: "Rank where your customers are already looking.",
+        id: 1,
+        name: "On-Page SEO",
+        description:
+          "Optimizing content, meta tags, and site structure for better rankings.",
       },
       {
-        icon: FaChartLine,
-        title: "Long-Term Organic Traffic",
-        description: "Consistent visitors without paying per click.",
+        id: 2,
+        name: "Off-Page SEO",
+        description:
+          "Building backlinks and authority through external strategies.",
       },
       {
-        icon: FaMapMarkerAlt,
-        title: "Better Local Visibility",
-        description: "Show up in local searches and Google Maps.",
-      },
-      {
-        icon: FaShieldAlt,
-        title: "Competitive Edge",
-        description: "Outrank competitors still ignoring their SEO.",
+        id: 3,
+        name: "Local SEO",
+        description:
+          "Improving visibility for businesses in local search results.",
       },
     ],
   },
   {
     name: "JuanTap",
-    type: "gallery",
-    illustration: JuanTapIllustration,
-    gallery: [
-      "https://picsum.photos/seed/juantap-business-card-1/300/200",
-      "https://picsum.photos/seed/juantap-business-card-2/300/200",
-      "https://picsum.photos/seed/juantap-business-card-3/300/200",
+    type: "detail",
+    image: "juantap.png",
+    subtitle: "Modern Networking Made Simple",
+    description: `Transform the way you network with JuanTap, our innovative digital business card solution. Share your contact information instantly with a single tap, making connections effortless and eco-friendly. Stand out in the digital age while keeping all your professional details accessible anytime, anywhere.`,
+    categories: [
+      {
+        id: 1,
+        name: "Personal Profiles",
+        description:
+          "Digital cards for individuals to share contact info instantly.",
+      },
+      {
+        id: 2,
+        name: "Corporate Teams",
+        description: "Centralized business card solutions for organizations.",
+      },
+      {
+        id: 3,
+        name: "Custom Branding",
+        description: "Tailored designs to match your brand identity.",
+      },
     ],
   },
   {
@@ -368,6 +555,7 @@ const brandingServices: BrandingService[] = [
     icon: FaBullhorn,
     color: "#f59e0b",
     tagline: "Put your brand in front of the right people, fast.",
+    thumbnailImage: "/paidads.png",
     benefits: [
       {
         icon: FaEye,
@@ -393,12 +581,260 @@ const brandingServices: BrandingService[] = [
   },
 ];
 
+/* ============================================================================
+ * SEO Audit Banner — inline lead-gen form, shown only under the SEO card
+ * ========================================================================== */
+
+function SEOAuditBanner() {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    mobile: "",
+    website_url: "",
+  });
+  const [errors, setErrors] = useState({
+    email: "",
+    mobile: "",
+    website_url: "",
+  });
+
+  const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const validateUrl = (v: string) => {
+    try {
+      new URL(v.startsWith("http") ? v : `https://${v}`);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleSubmit = async () => {
+    const newErrors = { email: "", mobile: "", website_url: "" };
+    let hasErr = false;
+    if (!form.full_name.trim()) {
+      toast({ title: "Full name is required", variant: "destructive" });
+      return;
+    }
+    if (!form.email || !validateEmail(form.email)) {
+      newErrors.email = "Valid email required";
+      hasErr = true;
+    }
+    if (!form.mobile.trim()) {
+      newErrors.mobile = "Mobile required";
+      hasErr = true;
+    }
+    if (!form.website_url.trim() || !validateUrl(form.website_url)) {
+      newErrors.website_url = "Valid URL required";
+      hasErr = true;
+    }
+    setErrors(newErrors);
+    if (hasErr) return;
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...form,
+        website_url: form.website_url.startsWith("http")
+          ? form.website_url
+          : `https://${form.website_url}`,
+      };
+      const res = await fetch("/api/seo-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Submission failed.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div
+      className="w-full rounded-2xl overflow-hidden my-8"
+      style={{
+        background:
+          "linear-gradient(135deg, #0d1b3e 0%, #1a306e 50%, #0d1b3e 100%)",
+        boxShadow:
+          "0 8px 40px rgba(13,27,62,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+      }}
+    >
+      <div
+        className="h-1 w-full"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, #f5a623 30%, #f5a623 70%, transparent 100%)",
+        }}
+      />
+
+      <div className="px-6 pt-5 pb-3 text-center">
+        <p
+          className="text-xs font-extrabold tracking-[0.3em] uppercase mb-1"
+          style={{ color: "#f5a623" }}
+        >
+          ✦ Free Service ✦
+        </p>
+        <h2 className="text-white font-bold text-lg md:text-xl leading-snug">
+          Get your Free SEO Audit from us.{" "}
+          <span style={{ color: "#f5a623" }}>Fill up the form below.</span>
+        </h2>
+      </div>
+
+      {submitted ? (
+        <div className="px-6 py-8 text-center">
+          <div className="text-5xl mb-3">🎉</div>
+          <p className="text-white font-bold text-lg">Request Received!</p>
+          <p className="text-slate-300 text-sm mt-2">
+            Our SEO specialists will analyze your site and reach out within
+            24–48 business hours.
+          </p>
+        </div>
+      ) : (
+        <div className="px-4 md:px-8 pb-5">
+          <div className="flex flex-col md:flex-row gap-3 items-start">
+            <div className="flex-1 min-w-0">
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={form.full_name}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, full_name: e.target.value }))
+                }
+                className="w-full bg-white/5 border border-white/20 rounded-full px-5 py-[11px] text-white text-sm placeholder:text-slate-400 outline-none focus:border-yellow-400 focus:bg-white/10 transition-all"
+              />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={form.email}
+                onChange={(e) => {
+                  setForm((p) => ({ ...p, email: e.target.value }));
+                  setErrors((p) => ({ ...p, email: "" }));
+                }}
+                className={`w-full bg-white/5 border rounded-full px-5 py-[11px] text-white text-sm placeholder:text-slate-400 outline-none transition-all focus:bg-white/10 ${errors.email ? "border-red-400" : "border-white/20 focus:border-yellow-400"}`}
+              />
+              {errors.email && (
+                <p className="text-red-400 text-xs mt-1 pl-4">{errors.email}</p>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <input
+                type="tel"
+                placeholder="Mobile Number"
+                value={form.mobile}
+                onChange={(e) => {
+                  setForm((p) => ({
+                    ...p,
+                    mobile: e.target.value.replace(/[a-zA-Z]/g, ""),
+                  }));
+                  setErrors((p) => ({ ...p, mobile: "" }));
+                }}
+                className={`w-full bg-white/5 border rounded-full px-5 py-[11px] text-white text-sm placeholder:text-slate-400 outline-none transition-all focus:bg-white/10 ${errors.mobile ? "border-red-400" : "border-white/20 focus:border-yellow-400"}`}
+              />
+              {errors.mobile && (
+                <p className="text-red-400 text-xs mt-1 pl-4">
+                  {errors.mobile}
+                </p>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <input
+                type="url"
+                placeholder="Website URL"
+                value={form.website_url}
+                onChange={(e) => {
+                  setForm((p) => ({ ...p, website_url: e.target.value }));
+                  setErrors((p) => ({ ...p, website_url: "" }));
+                }}
+                className={`w-full bg-white/5 border rounded-full px-5 py-[11px] text-white text-sm placeholder:text-slate-400 outline-none transition-all focus:bg-white/10 ${errors.website_url ? "border-red-400" : "border-white/20 focus:border-yellow-400"}`}
+              />
+              {errors.website_url && (
+                <p className="text-red-400 text-xs mt-1 pl-4">
+                  {errors.website_url}
+                </p>
+              )}
+            </div>
+
+            <div className="w-full md:w-auto flex-shrink-0 md:self-start">
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 font-bold text-sm text-white rounded-full px-6 py-[11px] transition-all duration-200 active:scale-95 disabled:opacity-70"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #e8220a 0%, #b91c0c 100%)",
+                  boxShadow: "0 4px 20px rgba(232,34,10,0.5)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSubmitting)
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "0 6px 28px rgba(232,34,10,0.7)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSubmitting)
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "0 4px 20px rgba(232,34,10,0.5)";
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4" /> Get My Free Quote Now!
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <p className="text-center text-slate-500 text-xs mt-4">
+            🔒 Your information is secure and will never be shared.
+          </p>
+        </div>
+      )}
+
+      <div
+        className="h-px w-full opacity-30"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, #f5a623, transparent)",
+        }}
+      />
+    </div>
+  );
+}
+
 const Services = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("website");
   const [selectedService, setSelectedService] = useState<string | null>(
     brandingServices[0]?.name ?? null,
   );
+  const [videoSurveyOpen, setVideoSurveyOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Request a Report modal
@@ -496,13 +932,13 @@ const Services = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <Button
+            {/* <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
               onPress={() => router.push("/quote")}
             >
               Get a Free Quote
-            </Button>
+            </Button> */}
             <button
               onClick={onAuditOpen}
               className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
@@ -517,16 +953,39 @@ const Services = () => {
       {/* MARKET RESEARCH */}
       {activeTab === "research" && (
         <div>
-          <div className="max-w-2xl mx-auto rounded-2xl bg-gradient-to-br from-primary to-slate-900 p-8 text-center mb-6 shadow-lg shadow-primary/20">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/20">
-              <FaSearchDollar className="h-8 w-8 text-accent-light" />
+          {/* Hero: image + copy, same layout language as the branding detail cards */}
+          <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 mb-10">
+            <div className="h-1.5 w-full bg-accent" />
+            <div className="p-5 sm:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div className="rounded-xl overflow-hidden">
+                  <MarketResearchIllustration />
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase text-accent mb-2">
+                    <FaSearchDollar className="h-4 w-4" />
+                    Market Research
+                  </span>
+                  <h3 className="text-primary font-bold text-2xl mb-3">
+                    Market Research Report
+                  </h3>
+                  <p className="text-gray-500 text-sm">
+                    Data-backed insights on your market, competitors, and
+                    audience — so every decision you make is backed by real
+                    numbers, not guesswork.
+                  </p>
+                  <div className="mt-6">
+                    <Button
+                      className="bg-accent text-white font-medium"
+                      endContent={<LuArrowRight size={18} />}
+                      onPress={onReportOpen}
+                    >
+                      Request a Report
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-white font-bold text-xl mb-2">
-              Market Research Report
-            </h3>
-            <p className="text-slate-300">
-              Data-backed insights on your market, competitors, and audience.
-            </p>
           </div>
 
           <div className="text-center mb-6">
@@ -558,7 +1017,7 @@ const Services = () => {
             ))}
           </div>
 
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <Button
               className="bg-accent text-white font-medium"
               endContent={<LuArrowRight size={18} />}
@@ -566,11 +1025,11 @@ const Services = () => {
             >
               Request a Report
             </Button>
-          </div>
+          </div> */}
         </div>
       )}
 
-      {/* BRANDING & DIGITAL MARKETING — single-row carousel + expandable gallery */}
+      {/* BRANDING & DIGITAL MARKETING — carousel + expandable detail/benefit panel */}
       {activeTab === "branding" && (
         <div>
           <div className="relative">
@@ -597,7 +1056,13 @@ const Services = () => {
                       setSelectedService(isSelected ? null : service.name)
                     }
                   >
-                    {service.type === "benefits" ? (
+                    {service.type === "benefits" && service.thumbnailImage ? (
+                      <img
+                        src={service.thumbnailImage}
+                        alt={service.name}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : service.type === "benefits" ? (
                       <div
                         className="absolute inset-0 flex items-center justify-center"
                         style={{
@@ -606,11 +1071,9 @@ const Services = () => {
                       >
                         <service.icon className="h-10 w-10 text-white/90" />
                       </div>
-                    ) : service.illustration ? (
-                      <service.illustration />
                     ) : (
                       <img
-                        src={service.image}
+                        src={`/images/services/${service.image}`}
                         alt={service.name}
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -633,7 +1096,7 @@ const Services = () => {
             </button>
           </div>
 
-          {/* Expanded gallery panel for the selected service */}
+          {/* Expanded panel for the selected service */}
           {activeService && (
             <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
               <div
@@ -662,7 +1125,7 @@ const Services = () => {
                     <h3 className="text-primary font-bold text-lg">
                       {activeService.type === "benefits"
                         ? `${activeService.name} — What You Get`
-                        : `${activeService.name} — Sample Work`}
+                        : activeService.name}
                     </h3>
                   </div>
                   <button
@@ -681,45 +1144,115 @@ const Services = () => {
                         {activeService.tagline}
                       </p>
                     )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {activeService.benefits.map((benefit) => (
-                        <div
-                          key={benefit.title}
-                          className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
-                        >
+
+                    {activeService.thumbnailImage ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
+                        <img
+                          src={activeService.thumbnailImage}
+                          alt={activeService.name}
+                          className="w-full h-56 object-contain"
+                        />
+                        <div className="grid grid-cols-1 gap-4">
+                          {activeService.benefits.map((benefit) => (
+                            <div
+                              key={benefit.title}
+                              className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                            >
+                              <div
+                                className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                                style={{
+                                  backgroundColor: `${activeService.color}1a`,
+                                }}
+                              >
+                                <benefit.icon
+                                  className="h-4.5 w-4.5"
+                                  style={{ color: activeService.color }}
+                                />
+                              </div>
+                              <div>
+                                <h4 className="text-primary font-semibold text-sm">
+                                  {benefit.title}
+                                </h4>
+                                <p className="text-gray-500 text-xs mt-0.5">
+                                  {benefit.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {activeService.benefits.map((benefit) => (
                           <div
-                            className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                            style={{
-                              backgroundColor: `${activeService.color}1a`,
-                            }}
+                            key={benefit.title}
+                            className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
                           >
-                            <benefit.icon
-                              className="h-4.5 w-4.5"
-                              style={{ color: activeService.color }}
-                            />
+                            <div
+                              className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                              style={{
+                                backgroundColor: `${activeService.color}1a`,
+                              }}
+                            >
+                              <benefit.icon
+                                className="h-4.5 w-4.5"
+                                style={{ color: activeService.color }}
+                              />
+                            </div>
+                            <div>
+                              <h4 className="text-primary font-semibold text-sm">
+                                {benefit.title}
+                              </h4>
+                              <p className="text-gray-500 text-xs mt-0.5">
+                                {benefit.description}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="text-primary font-semibold text-sm">
-                              {benefit.title}
-                            </h4>
-                            <p className="text-gray-500 text-xs mt-0.5">
-                              {benefit.description}
-                            </p>
-                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {activeService.showSEOAuditForm && <SEOAuditBanner />}
+                  </div>
+                ) : (
+                  <div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
+                      <img
+                        src={`/images/services/${activeService.image}`}
+                        alt={activeService.name}
+                        className="w-full h-56 object-contain"
+                      />
+                      <div>
+                        <h4 className="text-primary font-bold text-base mb-2">
+                          {activeService.subtitle}
+                        </h4>
+                        <p className="text-gray-500 text-sm">
+                          {activeService.description}
+                        </p>
+                        <ServiceCtaButtons
+                          ctas={activeService.ctas}
+                          onVideoSurvey={() => setVideoSurveyOpen(true)}
+                          onWebsiteAudit={onAuditOpen}
+                          className="mt-4 flex flex-wrap gap-3"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {activeService.categories.map((category) => (
+                        <div
+                          key={category.id}
+                          className="rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                        >
+                          <h4 className="text-primary font-semibold text-sm">
+                            {category.name}
+                          </h4>
+                          <p className="text-gray-500 text-xs mt-0.5">
+                            {category.description}
+                          </p>
                         </div>
                       ))}
                     </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {activeService.gallery.map((img: string, idx: number) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`${activeService.name} sample ${idx + 1}`}
-                        className="w-full h-40 object-cover rounded-lg"
-                      />
-                    ))}
+                    {activeService.showSEOAuditForm && <SEOAuditBanner />}
                   </div>
                 )}
               </div>
@@ -736,6 +1269,16 @@ const Services = () => {
         isOpen={isAuditOpen}
         onOpenChange={onAuditOpenChange}
       />
+
+      {/* Video survey modal — opened via the Photography & Videography CTA */}
+      <Dialog open={videoSurveyOpen} onOpenChange={setVideoSurveyOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 [&>button]:hidden">
+          <VideoSurveyForm
+            onClose={() => setVideoSurveyOpen(false)}
+            onSubmitSuccess={() => setVideoSurveyOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

@@ -218,39 +218,39 @@ const ServicesOverview = () => {
     },
   ];
 
-  return (
-    <section className="py-16 bg-primary">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-          <h2
-            className={`text-3xl sm:text-4xl text-white ${poetsen_one.className}`}
-          >
-            What We Do
-          </h2>
-          <p className="text-base md:text-lg text-gray-200">
-            Four areas of expertise, one dedicated team.
-          </p>
-        </div>
+  // return (
+  //   <section className="py-16 bg-primary">
+  //     <div className="container mx-auto px-4">
+  //       <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+  //         <h2
+  //           className={`text-3xl sm:text-4xl text-white ${poetsen_one.className}`}
+  //         >
+  //           What We Do
+  //         </h2>
+  //         <p className="text-base md:text-lg text-gray-200">
+  //           Four areas of expertise, one dedicated team.
+  //         </p>
+  //       </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="bg-white rounded-tr-3xl rounded-bl-3xl p-6 space-y-3 shadow-lg"
-            >
-              <div className="w-12 h-12 rounded-tr-xl rounded-bl-xl bg-accent text-white flex items-center justify-center text-xl">
-                {service.icon}
-              </div>
-              <h4 className="text-lg font-semibold text-primary">
-                {service.title}
-              </h4>
-              <p className="text-sm text-gray-600">{service.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  //       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  //         {services.map((service) => (
+  //           <div
+  //             key={service.title}
+  //             className="bg-white rounded-tr-3xl rounded-bl-3xl p-6 space-y-3 shadow-lg"
+  //           >
+  //             <div className="w-12 h-12 rounded-tr-xl rounded-bl-xl bg-accent text-white flex items-center justify-center text-xl">
+  //               {service.icon}
+  //             </div>
+  //             <h4 className="text-lg font-semibold text-primary">
+  //               {service.title}
+  //             </h4>
+  //             <p className="text-sm text-gray-600">{service.body}</p>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+  //   </section>
+  // );
 };
 
 /* -------------------------------------------------------------------- */
@@ -331,7 +331,7 @@ const AboutPage = () => {
       <AboutHero />
       {/* <MissionVision />
       <CoreValues /> */}
-      <ServicesOverview />
+      {/* <ServicesOverview /> */}
       {/* <StatsBar /> */}
       {/* <AboutCTA /> */}
     </main>
