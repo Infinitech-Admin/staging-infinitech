@@ -12,6 +12,7 @@ import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
 import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
 import RequestJuanTapModal from "@/components/RequestJuanTapModal";
 import RequestGraphicDesignModal from "@/components/Requestgraphicdesignmodal";
+import RequestPaidAdsModal from "@/components/RequestPaidAdsModal";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -177,14 +178,15 @@ const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
 
 // Keys for the lead-gen "Request ..." buttons shown on benefits-type and
 // detail-type branding cards (Social Media Management, TikTok Shop
-// Opening, JuanTap, Graphic Design, etc). Add a new key here + reference
-// it in a card's `requestButtonKey` to attach a button — the actual click
-// handler is passed in from the page.
+// Opening, JuanTap, Graphic Design, Paid Ads, etc). Add a new key here +
+// reference it in a card's `requestButtonKey` to attach a button — the
+// actual click handler is passed in from the page.
 type BenefitsRequestButtonKey =
   | "socialMedia"
   | "tiktokShop"
   | "juantap"
-  | "graphicDesign";
+  | "graphicDesign"
+  | "paidAds";
 
 const benefitsRequestButtonConfig: Record<
   BenefitsRequestButtonKey,
@@ -207,6 +209,11 @@ const benefitsRequestButtonConfig: Record<
   },
   graphicDesign: {
     label: "Request Graphic Design",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  paidAds: {
+    label: "Request Paid Ads",
     className:
       "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
   },
@@ -496,6 +503,9 @@ const brandingServices: BrandingService[] = [
     color: "#f59e0b",
     tagline: "Put your brand in front of the right people, fast.",
     thumbnailImage: "/paidads.png",
+    // Shows the "Request Paid Ads" CTA button when this card expands,
+    // same treatment as the other lead-gen cards.
+    requestButtonKey: "paidAds",
     benefits: [
       {
         icon: FaEye,
@@ -1167,9 +1177,9 @@ function BrandingSection({
 
                 {activeService.thumbnailImage ? (
                   // Image + benefits side-by-side (used by Social Media
-                  // Management, TikTok Shop Opening, JuanTap, and any
-                  // other benefits-card that sets thumbnailImage). Mirrors
-                  // the "detail" card layout below.
+                  // Management, TikTok Shop Opening, JuanTap, Paid Ads,
+                  // and any other benefits-card that sets thumbnailImage).
+                  // Mirrors the "detail" card layout below.
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
                     <img
                       src={activeService.thumbnailImage}
@@ -1211,7 +1221,11 @@ function BrandingSection({
                               activeService.requestButtonKey!,
                             )
                           }
-                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
                         >
                           {
                             benefitsRequestButtonConfig[
@@ -1224,7 +1238,6 @@ function BrandingSection({
                   </div>
                 ) : (
                   // Default layout — plain grid of benefit tiles, no image
-                  // (Paid Ads, etc.)
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {activeService.benefits.map((benefit) => (
                       <div
@@ -1261,7 +1274,11 @@ function BrandingSection({
                               activeService.requestButtonKey!,
                             )
                           }
-                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
                         >
                           {
                             benefitsRequestButtonConfig[
@@ -1308,7 +1325,11 @@ function BrandingSection({
                               activeService.requestButtonKey!,
                             )
                           }
-                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
                         >
                           {
                             benefitsRequestButtonConfig[
@@ -1369,6 +1390,8 @@ interface ServiceModalsProps {
   onJuantapOpenChange: (open: boolean) => void;
   graphicDesignOpen: boolean;
   onGraphicDesignOpenChange: (open: boolean) => void;
+  paidAdsOpen: boolean;
+  onPaidAdsOpenChange: (open: boolean) => void;
 }
 
 function ServiceModals({
@@ -1386,6 +1409,8 @@ function ServiceModals({
   onJuantapOpenChange,
   graphicDesignOpen,
   onGraphicDesignOpenChange,
+  paidAdsOpen,
+  onPaidAdsOpenChange,
 }: ServiceModalsProps) {
   return (
     <>
@@ -1434,6 +1459,12 @@ function ServiceModals({
         isOpen={graphicDesignOpen}
         onOpenChange={onGraphicDesignOpenChange}
       />
+
+      {/* 8. Request paid ads */}
+      <RequestPaidAdsModal
+        isOpen={paidAdsOpen}
+        onOpenChange={onPaidAdsOpenChange}
+      />
     </>
   );
 }
@@ -1476,6 +1507,11 @@ export default function Services() {
     onOpen: openGraphicDesign,
     onOpenChange: onGraphicDesignOpenChange,
   } = useDisclosure();
+  const {
+    isOpen: paidAdsOpen,
+    onOpen: openPaidAds,
+    onOpenChange: onPaidAdsOpenChange,
+  } = useDisclosure();
 
   // Routes a benefits/detail-card lead-gen button click to the right modal.
   const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
@@ -1483,6 +1519,7 @@ export default function Services() {
     if (key === "tiktokShop") openTiktokShop();
     if (key === "juantap") openJuantap();
     if (key === "graphicDesign") openGraphicDesign();
+    if (key === "paidAds") openPaidAds();
   };
 
   return (
@@ -1586,6 +1623,8 @@ export default function Services() {
         onJuantapOpenChange={onJuantapOpenChange}
         graphicDesignOpen={graphicDesignOpen}
         onGraphicDesignOpenChange={onGraphicDesignOpenChange}
+        paidAdsOpen={paidAdsOpen}
+        onPaidAdsOpenChange={onPaidAdsOpenChange}
       />
     </div>
   );

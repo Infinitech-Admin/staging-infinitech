@@ -19,6 +19,7 @@ import {
   Search,
   Megaphone,
   Palette,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,11 @@ const NAV_SECTIONS: NavSection[] = [
         href: "/admin/market-research",
         label: "Market Research",
         icon: SearchCheck,
+      },
+      {
+        href: "/admin/paid-ads",
+        label: "Paid Ads",
+        icon: TrendingUp,
       },
       {
         href: "/admin/demo-requirements",

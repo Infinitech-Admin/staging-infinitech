@@ -12,6 +12,7 @@ import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
 import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
 import RequestJuanTapModal from "@/components/RequestJuanTapModal";
 import RequestGraphicDesignModal from "@/components/Requestgraphicdesignmodal";
+import RequestPaidAdsModal from "@/components/RequestPaidAdsModal";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -241,7 +242,8 @@ type BenefitsRequestButtonKey =
   | "socialMedia"
   | "tiktokShop"
   | "juantap"
-  | "graphicDesign";
+  | "graphicDesign"
+  | "paidAds";
 
 const benefitsRequestButtonConfig: Record<
   BenefitsRequestButtonKey,
@@ -264,6 +266,11 @@ const benefitsRequestButtonConfig: Record<
   },
   graphicDesign: {
     label: "Request Graphic Design",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  paidAds: {
+    label: "Request Paid Ads",
     className:
       "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
   },
@@ -562,6 +569,7 @@ const brandingServices: BrandingService[] = [
     color: "#f59e0b",
     tagline: "Put your brand in front of the right people, fast.",
     thumbnailImage: "/paidads.png",
+    requestButtonKey: "paidAds",
     benefits: [
       {
         icon: FaEye,
@@ -947,16 +955,6 @@ function WebsiteSolutionsSection({
           </div>
         ))}
       </div>
-
-      {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-        <button
-          onClick={onWebsiteAudit}
-          className="flex items-center gap-2 rounded-full bg-[#0d1b3e] border-2 border-[#f5a623] px-5 py-2.5 text-sm font-bold text-[#f5a623] transition-all duration-300 hover:bg-[#f5a623] hover:text-[#0d1b3e] hover:shadow-lg"
-        >
-          <MdOutlineSpeed className="h-4 w-4" />
-          Already have a site? Get a Website Audit
-        </button>
-      </div> */}
     </div>
   );
 }
@@ -1517,6 +1515,8 @@ interface ServiceModalsProps {
   onJuantapOpenChange: (open: boolean) => void;
   graphicDesignOpen: boolean;
   onGraphicDesignOpenChange: (open: boolean) => void;
+  paidAdsOpen: boolean;
+  onPaidAdsOpenChange: (open: boolean) => void;
 }
 
 function ServiceModals({
@@ -1534,6 +1534,8 @@ function ServiceModals({
   onJuantapOpenChange,
   graphicDesignOpen,
   onGraphicDesignOpenChange,
+  paidAdsOpen,
+  onPaidAdsOpenChange,
 }: ServiceModalsProps) {
   return (
     <>
@@ -1574,6 +1576,11 @@ function ServiceModals({
       <RequestGraphicDesignModal
         isOpen={graphicDesignOpen}
         onOpenChange={onGraphicDesignOpenChange}
+      />
+
+      <RequestPaidAdsModal
+        isOpen={paidAdsOpen}
+        onOpenChange={onPaidAdsOpenChange}
       />
     </>
   );
@@ -1619,12 +1626,18 @@ export default function Services() {
     onOpen: openGraphicDesign,
     onOpenChange: onGraphicDesignOpenChange,
   } = useDisclosure();
+  const {
+    isOpen: paidAdsOpen,
+    onOpen: openPaidAds,
+    onOpenChange: onPaidAdsOpenChange,
+  } = useDisclosure();
 
   const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
     if (key === "socialMedia") openSocialMedia();
     if (key === "tiktokShop") openTiktokShop();
     if (key === "juantap") openJuantap();
     if (key === "graphicDesign") openGraphicDesign();
+    if (key === "paidAds") openPaidAds();
   };
 
   return (
@@ -1689,6 +1702,8 @@ export default function Services() {
         onJuantapOpenChange={onJuantapOpenChange}
         graphicDesignOpen={graphicDesignOpen}
         onGraphicDesignOpenChange={onGraphicDesignOpenChange}
+        paidAdsOpen={paidAdsOpen}
+        onPaidAdsOpenChange={onPaidAdsOpenChange}
       />
     </section>
   );
