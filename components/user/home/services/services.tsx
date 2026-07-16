@@ -11,6 +11,7 @@ import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
 import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
 import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
 import RequestJuanTapModal from "@/components/RequestJuanTapModal";
+import RequestGraphicDesignModal from "@/components/Requestgraphicdesignmodal";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -98,6 +99,7 @@ interface DetailService {
   categories: ServiceCategory[];
   ctas?: readonly ServiceCtaKey[];
   showSEOAuditForm?: boolean;
+  requestButtonKey?: BenefitsRequestButtonKey;
 }
 type BrandingService = BenefitsService | DetailService;
 
@@ -235,7 +237,11 @@ const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
   },
 };
 
-type BenefitsRequestButtonKey = "socialMedia" | "tiktokShop" | "juantap";
+type BenefitsRequestButtonKey =
+  | "socialMedia"
+  | "tiktokShop"
+  | "juantap"
+  | "graphicDesign";
 
 const benefitsRequestButtonConfig: Record<
   BenefitsRequestButtonKey,
@@ -255,6 +261,11 @@ const benefitsRequestButtonConfig: Record<
     label: "Apply for JuanTap",
     className:
       "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  graphicDesign: {
+    label: "Request Graphic Design",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
   },
 };
 
@@ -465,6 +476,7 @@ const brandingServices: BrandingService[] = [
     image: "design.svg",
     subtitle: "Bringing Your Brand to Life with Stunning Designs",
     description: `Our creative team designs visually appealing graphics that reflect your brand identity, making a lasting impression on your audience. From logos to promotional materials, we've got you covered.`,
+    requestButtonKey: "graphicDesign",
     categories: [
       {
         id: 1,
@@ -1437,6 +1449,28 @@ function BrandingSection({
                       onWebsiteAudit={onWebsiteAudit}
                       className="mt-4 flex flex-wrap gap-3"
                     />
+                    {activeService.requestButtonKey && (
+                      <div className="mt-4">
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1481,6 +1515,8 @@ interface ServiceModalsProps {
   onTiktokShopOpenChange: (open: boolean) => void;
   juantapOpen: boolean;
   onJuantapOpenChange: (open: boolean) => void;
+  graphicDesignOpen: boolean;
+  onGraphicDesignOpenChange: (open: boolean) => void;
 }
 
 function ServiceModals({
@@ -1496,6 +1532,8 @@ function ServiceModals({
   onTiktokShopOpenChange,
   juantapOpen,
   onJuantapOpenChange,
+  graphicDesignOpen,
+  onGraphicDesignOpenChange,
 }: ServiceModalsProps) {
   return (
     <>
@@ -1531,6 +1569,11 @@ function ServiceModals({
       <RequestJuanTapModal
         isOpen={juantapOpen}
         onOpenChange={onJuantapOpenChange}
+      />
+
+      <RequestGraphicDesignModal
+        isOpen={graphicDesignOpen}
+        onOpenChange={onGraphicDesignOpenChange}
       />
     </>
   );
@@ -1571,11 +1614,17 @@ export default function Services() {
     onOpen: openJuantap,
     onOpenChange: onJuantapOpenChange,
   } = useDisclosure();
+  const {
+    isOpen: graphicDesignOpen,
+    onOpen: openGraphicDesign,
+    onOpenChange: onGraphicDesignOpenChange,
+  } = useDisclosure();
 
   const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
     if (key === "socialMedia") openSocialMedia();
     if (key === "tiktokShop") openTiktokShop();
     if (key === "juantap") openJuantap();
+    if (key === "graphicDesign") openGraphicDesign();
   };
 
   return (
@@ -1638,6 +1687,8 @@ export default function Services() {
         onTiktokShopOpenChange={onTiktokShopOpenChange}
         juantapOpen={juantapOpen}
         onJuantapOpenChange={onJuantapOpenChange}
+        graphicDesignOpen={graphicDesignOpen}
+        onGraphicDesignOpenChange={onGraphicDesignOpenChange}
       />
     </section>
   );

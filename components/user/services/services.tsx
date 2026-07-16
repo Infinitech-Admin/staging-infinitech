@@ -11,6 +11,7 @@ import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
 import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
 import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
 import RequestJuanTapModal from "@/components/RequestJuanTapModal";
+import RequestGraphicDesignModal from "@/components/Requestgraphicdesignmodal";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -90,6 +91,10 @@ interface DetailService {
   ctas?: readonly ServiceCtaKey[];
   // Optional: show the Free SEO Audit lead-gen form when this card expands.
   showSEOAuditForm?: boolean;
+  // Optional: show a lead-gen "Request ..." CTA button when this card
+  // expands. Key selects which modal/label to use (see
+  // benefitsRequestButtonConfig below).
+  requestButtonKey?: BenefitsRequestButtonKey;
 }
 type BrandingService = BenefitsService | DetailService;
 
@@ -170,11 +175,16 @@ const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
   },
 };
 
-// Keys for the lead-gen "Request ..." buttons shown on benefits-type
-// branding cards (Social Media Management, TikTok Shop Opening, JuanTap,
-// etc). Add a new key here + reference it in a card's `requestButtonKey`
-// to attach a button — the actual click handler is passed in from the page.
-type BenefitsRequestButtonKey = "socialMedia" | "tiktokShop" | "juantap";
+// Keys for the lead-gen "Request ..." buttons shown on benefits-type and
+// detail-type branding cards (Social Media Management, TikTok Shop
+// Opening, JuanTap, Graphic Design, etc). Add a new key here + reference
+// it in a card's `requestButtonKey` to attach a button — the actual click
+// handler is passed in from the page.
+type BenefitsRequestButtonKey =
+  | "socialMedia"
+  | "tiktokShop"
+  | "juantap"
+  | "graphicDesign";
 
 const benefitsRequestButtonConfig: Record<
   BenefitsRequestButtonKey,
@@ -194,6 +204,11 @@ const benefitsRequestButtonConfig: Record<
     label: "Apply for JuanTap",
     className:
       "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  graphicDesign: {
+    label: "Request Graphic Design",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
   },
 };
 
@@ -510,6 +525,9 @@ const brandingServices: BrandingService[] = [
     image: "design.svg",
     subtitle: "Bringing Your Brand to Life with Stunning Designs",
     description: `Our creative team designs visually appealing graphics that reflect your brand identity, making a lasting impression on your audience. From logos to promotional materials, we've got you covered.`,
+    // Shows the "Request Graphic Design" CTA button when this card
+    // expands, same treatment as the other lead-gen cards.
+    requestButtonKey: "graphicDesign",
     categories: [
       {
         id: 1,
@@ -1279,6 +1297,27 @@ function BrandingSection({
                       onWebsiteAudit={onWebsiteAudit}
                       className="mt-4 flex flex-wrap gap-3"
                     />
+                    {/* lead-gen "Request ..." button for detail-type cards
+                        that set requestButtonKey (Graphic Design) — mirrors
+                        the benefits-card treatment above */}
+                    {activeService.requestButtonKey && (
+                      <div className="mt-4">
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1328,6 +1367,8 @@ interface ServiceModalsProps {
   onTiktokShopOpenChange: (open: boolean) => void;
   juantapOpen: boolean;
   onJuantapOpenChange: (open: boolean) => void;
+  graphicDesignOpen: boolean;
+  onGraphicDesignOpenChange: (open: boolean) => void;
 }
 
 function ServiceModals({
@@ -1343,6 +1384,8 @@ function ServiceModals({
   onTiktokShopOpenChange,
   juantapOpen,
   onJuantapOpenChange,
+  graphicDesignOpen,
+  onGraphicDesignOpenChange,
 }: ServiceModalsProps) {
   return (
     <>
@@ -1385,6 +1428,12 @@ function ServiceModals({
         isOpen={juantapOpen}
         onOpenChange={onJuantapOpenChange}
       />
+
+      {/* 7. Request graphic design */}
+      <RequestGraphicDesignModal
+        isOpen={graphicDesignOpen}
+        onOpenChange={onGraphicDesignOpenChange}
+      />
     </>
   );
 }
@@ -1422,12 +1471,18 @@ export default function Services() {
     onOpen: openJuantap,
     onOpenChange: onJuantapOpenChange,
   } = useDisclosure();
+  const {
+    isOpen: graphicDesignOpen,
+    onOpen: openGraphicDesign,
+    onOpenChange: onGraphicDesignOpenChange,
+  } = useDisclosure();
 
-  // Routes a benefits-card lead-gen button click to the right modal.
+  // Routes a benefits/detail-card lead-gen button click to the right modal.
   const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
     if (key === "socialMedia") openSocialMedia();
     if (key === "tiktokShop") openTiktokShop();
     if (key === "juantap") openJuantap();
+    if (key === "graphicDesign") openGraphicDesign();
   };
 
   return (
@@ -1529,6 +1584,8 @@ export default function Services() {
         onTiktokShopOpenChange={onTiktokShopOpenChange}
         juantapOpen={juantapOpen}
         onJuantapOpenChange={onJuantapOpenChange}
+        graphicDesignOpen={graphicDesignOpen}
+        onGraphicDesignOpenChange={onGraphicDesignOpenChange}
       />
     </div>
   );

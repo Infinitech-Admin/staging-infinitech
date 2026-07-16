@@ -18,6 +18,7 @@ import {
   CalendarCheck,
   Search,
   Megaphone,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,11 @@ const NAV_SECTIONS: NavSection[] = [
     title: "Leads & Requests",
     items: [
       { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+      {
+        href: "/admin/graphic-design",
+        label: "Graphic Design",
+        icon: Palette,
+      },
       { href: "/admin/website-audit", label: "Website Audit", icon: Search },
       { href: "/admin/seo-audits", label: "SEO Audit", icon: SearchCheck },
       {
