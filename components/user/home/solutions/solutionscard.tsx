@@ -232,7 +232,7 @@ const solutionsdata: Solution[] = [
 const SolutionsPage: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>("All");
+  const [visibleCount, setVisibleCount] = useState(8);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -255,22 +255,6 @@ const SolutionsPage: React.FC = () => {
       }
     };
   }, []);
-
-  // Unique categories
-  const categories = [
-    "All",
-    ...Array.from(new Set(solutionsdata.map((item) => item.category))),
-  ];
-
-  const filteredSolutions =
-    activeFilter === "All"
-      ? solutionsdata
-      : solutionsdata.filter((item) => item.category === activeFilter);
-
-  const filteredTestimonials =
-    activeFilter === "All"
-      ? solutionsTestimonials
-      : solutionsTestimonials.filter((item) => item.category === activeFilter);
 
   const handleExternalLink = (url: string, e?: React.MouseEvent) => {
     if (e) {
@@ -450,92 +434,10 @@ const SolutionsPage: React.FC = () => {
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div
-            className={`text-center mb-12 lg:mb-16 transition-all duration-1000 ${
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10"
-            }`}
-          >
-            {/* Category Filters */}
-            <div
-              className={`mb-8 sm:mb-12 transition-all duration-1000 delay-300 relative z-20 ${
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10"
-              }`}
-            >
-              {/* Mobile Dropdown */}
-              <div className="md:hidden px-4 max-w-md mx-auto">
-                <div className="relative">
-                  <label className="block text-slate-700 font-semibold text-xs mb-2 text-center">
-                    Filter by Category
-                  </label>
-                  <select
-                    value={activeFilter}
-                    onChange={(e) => setActiveFilter(e.target.value)}
-                    className="w-full px-4 py-3.5 rounded-xl font-bold text-base bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 cursor-pointer appearance-none pr-10 text-center transition-all duration-300"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to right, #2563eb, #06b6d4)",
-                      color: "white",
-                    }}
-                  >
-                    {categories.map((category) => (
-                      <option
-                        key={category}
-                        value={category}
-                        className="bg-slate-800 text-white font-semibold py-3"
-                        style={{
-                          backgroundColor: "#1e293b",
-                          color: "#87ceeb",
-                        }}
-                      >
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-3 top-[60%] -translate-y-1/2 pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2.5}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* Desktop Buttons */}
-              <div className="hidden md:flex flex-wrap justify-center gap-3 max-w-4xl mx-auto px-4">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setActiveFilter(category)}
-                    className={`px-4 lg:px-6 py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 text-sm lg:text-base whitespace-nowrap ${
-                      activeFilter === category
-                        ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg scale-105"
-                        : "bg-white/70 text-slate-600 hover:bg-white hover:text-slate-800 border border-slate-200 hover:scale-105"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* Solutions Grid */}
           <div className="mb-16">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-              {filteredSolutions.map((solution, index) => (
+              {solutionsdata.slice(0, visibleCount).map((solution, index) => (
                 <SolutionCard
                   key={solution.id}
                   solution={solution}
@@ -543,6 +445,17 @@ const SolutionsPage: React.FC = () => {
                 />
               ))}
             </div>
+
+            {visibleCount < solutionsdata.length && (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={() => setVisibleCount((c) => c + 8)}
+                  className="px-8 py-3 rounded-full font-bold text-sm bg-white/80 text-slate-700 border border-slate-200 hover:bg-white hover:scale-105 transition-all duration-300 shadow-md"
+                >
+                  Load More ({solutionsdata.length - visibleCount} more)
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Testimonials */}
@@ -556,7 +469,7 @@ const SolutionsPage: React.FC = () => {
               </p>
             </div>
 
-            <TestimonialsSlider testimonials={filteredTestimonials} />
+            <TestimonialsSlider testimonials={solutionsTestimonials} />
           </div>
         </div>
       </div>

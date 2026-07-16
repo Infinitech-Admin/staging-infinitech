@@ -1,26 +1,23 @@
 "use client";
-
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button, useDisclosure } from "@heroui/react";
 import { Button as ShadButton } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
 import { Loader2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import VideoSurveyForm from "@/components/video-survey-form";
+import RequestReportModal from "@/components/RequestReportModal";
+import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
+import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
+import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
+import RequestJuanTapModal from "@/components/RequestJuanTapModal";
 import {
   LuArrowRight,
   LuChevronLeft,
   LuChevronRight,
   LuX,
 } from "react-icons/lu";
-import { GoCheck } from "react-icons/go";
 import {
-  FaGlobe,
-  FaCalendarCheck,
-  FaBriefcase,
-  FaShoppingCart,
-  FaSearchDollar,
   FaShieldAlt,
   FaBullseye,
   FaChartLine,
@@ -37,16 +34,76 @@ import {
   FaEye,
   FaCrosshairs,
   FaSlidersH,
+  FaSearchDollar,
+  FaAddressCard,
+  FaUsers,
+  FaPalette,
+  FaBolt,
+  FaGlobe,
+  FaCalendarCheck,
+  FaBriefcase,
+  FaShoppingCart,
 } from "react-icons/fa";
+import { GoCheck } from "react-icons/go";
 import { MdOutlineSpeed } from "react-icons/md";
-import RequestReportModal from "@/components/RequestReportModal";
-import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
+
+/* ============================================================================
+ * TABS — top-level navigation, keeps the page short instead of one long
+ * scroll. Each tab renders only its own section.
+ * ========================================================================== */
 
 const mainCategories = [
   { key: "website", title: "Website Solutions" },
   { key: "research", title: "Market Research" },
   { key: "branding", title: "Branding & Marketing" },
-];
+] as const;
+
+type MainCategoryKey = (typeof mainCategories)[number]["key"];
+
+/* ============================================================================
+ * TYPES
+ * ========================================================================== */
+
+interface IconProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+interface BenefitItem {
+  icon: React.ComponentType<IconProps>;
+  title: string;
+  description: string;
+}
+interface ServiceCategory {
+  id: number;
+  name: string;
+  description: string;
+}
+interface BenefitsService {
+  name: string;
+  type: "benefits";
+  icon: React.ComponentType<IconProps>;
+  color: string;
+  tagline: string;
+  benefits: BenefitItem[];
+  thumbnailImage?: string;
+  showSEOAuditForm?: boolean;
+  requestButtonKey?: BenefitsRequestButtonKey;
+}
+interface DetailService {
+  name: string;
+  type: "detail";
+  image: string;
+  subtitle: string;
+  description: string;
+  categories: ServiceCategory[];
+  ctas?: readonly ServiceCtaKey[];
+  showSEOAuditForm?: boolean;
+}
+type BrandingService = BenefitsService | DetailService;
+
+/* ============================================================================
+ * DATA — Website Solutions pricing packages
+ * ========================================================================== */
 
 const packages = [
   {
@@ -107,145 +164,149 @@ const packages = [
   },
 ];
 
-// Market Research: illustrate a data dashboard being examined — mirrors the
-// flat, blue/orange illustration style used by the branding service images.
-const MarketResearchIllustration = () => (
-  <div className="w-full aspect-video rounded-xl overflow-hidden">
-    <svg viewBox="0 0 640 360" className="w-full h-full block">
-      <rect width="640" height="360" fill="#0d1b3e" />
+/* ============================================================================
+ * DATA — main service blocks (Website Dev / Design / Social Media)
+ * ========================================================================== */
 
-      {/* dashboard card */}
-      <rect
-        x="40"
-        y="45"
-        width="370"
-        height="270"
-        rx="14"
-        fill="#ffffff"
-        opacity="0.06"
-      />
-      <rect
-        x="40"
-        y="45"
-        width="370"
-        height="270"
-        rx="14"
-        fill="none"
-        stroke="#f5a623"
-        strokeWidth="1.5"
-        opacity="0.4"
-      />
+const services = [
+  {
+    title: "WEBSITE DEVELOPMENT",
+    subtitle: "Crafting Custom Websites Tailored to Your Needs",
+    description: `We create visually stunning and highly functional websites that capture attention, convey your brand's message, and give you a competitive edge. Share your vision with us, and we'll take care of the rest.`,
+    image: "web-dev.svg",
+    ctas: ["websiteAudit"] as const,
+    categories: [
+      {
+        id: 1,
+        name: "Hotel Management",
+        description:
+          "Websites designed for hotels, resorts, and hospitality businesses with booking and management features.",
+      },
+      {
+        id: 2,
+        name: "Corporate Website",
+        description:
+          "Professional websites for companies to showcase services, portfolios, and corporate identity.",
+      },
+      {
+        id: 3,
+        name: "Manpower Platform",
+        description:
+          "Platforms for recruitment, staffing, and workforce management with user-friendly interfaces.",
+      },
+      {
+        id: 4,
+        name: "Real Estate",
+        description:
+          "Property listing and management websites tailored for real estate agencies and brokers.",
+      },
+      {
+        id: 5,
+        name: "E-Commerce",
+        description:
+          "Online stores with secure payment gateways, product catalogs, and shopping cart functionality.",
+      },
+      {
+        id: 6,
+        name: "Booking System",
+        description:
+          "Websites with integrated booking and scheduling systems for services and events.",
+      },
+    ],
+  },
+];
 
-      {/* bars */}
-      <rect x="70" y="195" width="30" height="95" rx="5" fill="#38bdf8" />
-      <rect
-        x="115"
-        y="165"
-        width="30"
-        height="125"
-        rx="5"
-        fill="#38bdf8"
-        opacity="0.8"
-      />
-      <rect x="160" y="120" width="30" height="170" rx="5" fill="#f5a623" />
-      <rect
-        x="205"
-        y="150"
-        width="30"
-        height="140"
-        rx="5"
-        fill="#38bdf8"
-        opacity="0.8"
-      />
-      <rect x="250" y="95" width="30" height="195" rx="5" fill="#f5a623" />
-      <rect
-        x="295"
-        y="115"
-        width="30"
-        height="175"
-        rx="5"
-        fill="#38bdf8"
-        opacity="0.8"
-      />
+/* ============================================================================
+ * CONFIG — CTA buttons
+ * ========================================================================== */
 
-      {/* trend line */}
-      <polyline
-        points="85,185 130,155 175,110 220,135 265,85 310,100"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.85"
-      />
-      <circle cx="310" cy="100" r="5" fill="#ffffff" />
+type ServiceCtaKey = "websiteAudit" | "videoSurvey";
 
-      {/* magnifying glass — fully inside the card bounds, no clipping */}
-      <circle
-        cx="345"
-        cy="240"
-        r="38"
-        fill="#0d1b3e"
-        stroke="#f5a623"
-        strokeWidth="6"
-      />
-      <circle
-        cx="345"
-        cy="240"
-        r="27"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="2"
-        opacity="0.5"
-      />
-      <line
-        x1="371"
-        y1="266"
-        x2="400"
-        y2="295"
-        stroke="#f5a623"
-        strokeWidth="7"
-        strokeLinecap="round"
-      />
-      <text x="333" y="247" fontSize="22" fill="#ffffff" fontWeight="bold">
-        $
-      </text>
+interface ServiceCtaConfigEntry {
+  label: string;
+  kind: "primary" | "secondary";
+}
 
-      {/* right-side stat panels */}
-      <rect
-        x="430"
-        y="45"
-        width="170"
-        height="110"
-        rx="12"
-        fill="#ffffff"
-        opacity="0.06"
-      />
-      <text x="452" y="95" fontSize="30" fontWeight="bold" fill="#f5a623">
-        +142%
-      </text>
-      <text x="452" y="120" fontSize="14" fill="#ffffff" opacity="0.7">
-        Market Growth
-      </text>
+const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
+  videoSurvey: { label: "Take Video Survey", kind: "primary" },
+  websiteAudit: {
+    label: "Already have a site? Get a Website Audit",
+    kind: "secondary",
+  },
+};
 
-      <rect
-        x="430"
-        y="170"
-        width="170"
-        height="110"
-        rx="12"
-        fill="#ffffff"
-        opacity="0.06"
-      />
-      <text x="452" y="220" fontSize="30" fontWeight="bold" fill="#38bdf8">
-        3.2x
-      </text>
-      <text x="452" y="245" fontSize="14" fill="#ffffff" opacity="0.7">
-        Audience Insight
-      </text>
-    </svg>
-  </div>
-);
+type BenefitsRequestButtonKey = "socialMedia" | "tiktokShop" | "juantap";
+
+const benefitsRequestButtonConfig: Record<
+  BenefitsRequestButtonKey,
+  { label: string; className: string }
+> = {
+  socialMedia: {
+    label: "Request Social Media Management",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  tiktokShop: {
+    label: "Request TikTok Shop Opening",
+    className:
+      "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  juantap: {
+    label: "Apply for JuanTap",
+    className:
+      "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+};
+
+function ServiceCtaButtons({
+  ctas,
+  onVideoSurvey,
+  onWebsiteAudit,
+  className = "mt-6 flex flex-wrap gap-3",
+}: {
+  ctas: readonly ServiceCtaKey[] | undefined;
+  onVideoSurvey: () => void;
+  onWebsiteAudit: () => void;
+  className?: string;
+}) {
+  if (!ctas || ctas.length === 0) return null;
+
+  return (
+    <div className={className}>
+      {ctas.map((ctaKey) => {
+        const cta = serviceCtaConfig[ctaKey];
+        if (ctaKey === "videoSurvey") {
+          return (
+            <ShadButton
+              key={ctaKey}
+              onClick={onVideoSurvey}
+              className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              {cta.label}
+            </ShadButton>
+          );
+        }
+        if (ctaKey === "websiteAudit") {
+          return (
+            <button
+              key={ctaKey}
+              onClick={onWebsiteAudit}
+              className="flex items-center gap-2 rounded-full bg-[#0d1b3e] border-2 border-[#f5a623] px-5 py-2.5 text-sm font-bold text-[#f5a623] transition-all duration-300 hover:bg-[#f5a623] hover:text-[#0d1b3e] hover:shadow-lg"
+            >
+              {cta.label}
+            </button>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+}
+
+/* ============================================================================
+ * DATA — Market research benefits
+ * ========================================================================== */
+
 const researchBenefits = [
   {
     title: "Avoid Costly Mistakes",
@@ -286,108 +347,8 @@ const researchBenefits = [
 ];
 
 /* ============================================================================
- * BRANDING & MARKETING — upgraded data shape
- * "benefits" cards = simple 4-benefit tiles (with an optional real thumbnail
- * image shown side-by-side). "detail" cards = image + subtitle + description
- * + category grid, same shape as the full Services page, with optional
- * CTA buttons and/or the Free SEO Audit lead-gen form.
+ * DATA — Branding & marketing carousel
  * ========================================================================== */
-
-interface IconProps {
-  className?: string;
-  style?: React.CSSProperties;
-}
-interface BenefitItem {
-  icon: React.ComponentType<IconProps>;
-  title: string;
-  description: string;
-}
-interface ServiceCategory {
-  id: number;
-  name: string;
-  description: string;
-}
-interface BenefitsService {
-  name: string;
-  type: "benefits";
-  icon: React.ComponentType<IconProps>;
-  color: string;
-  tagline: string;
-  benefits: BenefitItem[];
-  thumbnailImage?: string;
-  showSEOAuditForm?: boolean;
-}
-interface DetailService {
-  name: string;
-  type: "detail";
-  image: string;
-  subtitle: string;
-  description: string;
-  categories: ServiceCategory[];
-  ctas?: readonly ServiceCtaKey[];
-  showSEOAuditForm?: boolean;
-}
-type BrandingService = BenefitsService | DetailService;
-
-type ServiceCtaKey = "websiteAudit" | "videoSurvey";
-
-interface ServiceCtaConfigEntry {
-  label: string;
-  kind: "primary" | "secondary";
-}
-
-const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
-  videoSurvey: { label: "Take Video Survey", kind: "primary" },
-  websiteAudit: {
-    label: "Already have a site? Get a Website Audit",
-    kind: "secondary",
-  },
-};
-
-function ServiceCtaButtons({
-  ctas,
-  onVideoSurvey,
-  onWebsiteAudit,
-  className = "mt-6 flex flex-wrap gap-3",
-}: {
-  ctas: readonly ServiceCtaKey[] | undefined;
-  onVideoSurvey: () => void;
-  onWebsiteAudit: () => void;
-  className?: string;
-}) {
-  if (!ctas || ctas.length === 0) return null;
-
-  return (
-    <div className={className}>
-      {ctas.map((ctaKey) => {
-        const cta = serviceCtaConfig[ctaKey];
-        if (ctaKey === "videoSurvey") {
-          return (
-            <ShadButton
-              key={ctaKey}
-              onClick={onVideoSurvey}
-              className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              {cta.label}
-            </ShadButton>
-          );
-        }
-        if (ctaKey === "websiteAudit") {
-          return (
-            <button
-              key={ctaKey}
-              onClick={onWebsiteAudit}
-              className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
-            >
-              {cta.label}
-            </button>
-          );
-        }
-        return null;
-      })}
-    </div>
-  );
-}
 
 const brandingServices: BrandingService[] = [
   {
@@ -397,6 +358,7 @@ const brandingServices: BrandingService[] = [
     color: "#0ea5e9",
     tagline: "Consistent content, real engagement.",
     thumbnailImage: "/images/services/marketing.svg",
+    requestButtonKey: "socialMedia",
     benefits: [
       {
         icon: FaCalendarAlt,
@@ -427,6 +389,7 @@ const brandingServices: BrandingService[] = [
     color: "#f43f5e",
     tagline: "Get your shop live and selling fast.",
     thumbnailImage: "/tiktokshop.png",
+    requestButtonKey: "tiktokShop",
     benefits: [
       {
         icon: FaStore,
@@ -497,6 +460,30 @@ const brandingServices: BrandingService[] = [
     ],
   },
   {
+    name: "Graphic Design",
+    type: "detail",
+    image: "design.svg",
+    subtitle: "Bringing Your Brand to Life with Stunning Designs",
+    description: `Our creative team designs visually appealing graphics that reflect your brand identity, making a lasting impression on your audience. From logos to promotional materials, we've got you covered.`,
+    categories: [
+      {
+        id: 1,
+        name: "Logo Design",
+        description: "Unique logos that capture your brand identity.",
+      },
+      {
+        id: 2,
+        name: "Marketing Collateral",
+        description: "Brochures, flyers, and promotional materials.",
+      },
+      {
+        id: 3,
+        name: "Digital Assets",
+        description: "Social media graphics, banners, and ads.",
+      },
+    ],
+  },
+  {
     name: "SEO",
     type: "detail",
     image: "seo.svg",
@@ -526,26 +513,33 @@ const brandingServices: BrandingService[] = [
   },
   {
     name: "JuanTap",
-    type: "detail",
-    image: "juantap.png",
-    subtitle: "Modern Networking Made Simple",
-    description: `Transform the way you network with JuanTap, our innovative digital business card solution. Share your contact information instantly with a single tap, making connections effortless and eco-friendly. Stand out in the digital age while keeping all your professional details accessible anytime, anywhere.`,
-    categories: [
+    type: "benefits",
+    icon: FaAddressCard,
+    color: "#6366f1",
+    tagline: "Share your info with a single tap.",
+    thumbnailImage: "/images/services/juantap.png",
+    requestButtonKey: "juantap",
+    benefits: [
       {
-        id: 1,
-        name: "Personal Profiles",
+        icon: FaAddressCard,
+        title: "Personal Profiles",
         description:
           "Digital cards for individuals to share contact info instantly.",
       },
       {
-        id: 2,
-        name: "Corporate Teams",
+        icon: FaUsers,
+        title: "Corporate Teams",
         description: "Centralized business card solutions for organizations.",
       },
       {
-        id: 3,
-        name: "Custom Branding",
+        icon: FaPalette,
+        title: "Custom Branding",
         description: "Tailored designs to match your brand identity.",
+      },
+      {
+        icon: FaBolt,
+        title: "Instant Tap Sharing",
+        description: "Share your details in a single tap — no app required.",
       },
     ],
   },
@@ -582,7 +576,7 @@ const brandingServices: BrandingService[] = [
 ];
 
 /* ============================================================================
- * SEO Audit Banner — inline lead-gen form, shown only under the SEO card
+ * SECTION: SEO Audit Banner
  * ========================================================================== */
 
 function SEOAuditBanner() {
@@ -828,28 +822,352 @@ function SEOAuditBanner() {
   );
 }
 
-const Services = () => {
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("website");
+/* ============================================================================
+ * SECTION: Website Solutions (services detail blocks + pricing packages)
+ * ========================================================================== */
+
+function WebsiteSolutionsSection({
+  onVideoSurvey,
+  onWebsiteAudit,
+}: {
+  onVideoSurvey: () => void;
+  onWebsiteAudit: () => void;
+}) {
+  return (
+    <div className="w-full">
+      {services.map((service, serviceIndex) => (
+        <div key={`${service.title}-${serviceIndex}`} className="w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 mb-8">
+            <div
+              className={serviceIndex % 2 === 0 ? "md:order-2" : "md:order-1"}
+            >
+              <img
+                className="w-full h-[28rem] object-contain"
+                alt={service.title}
+                src={`/images/services/${service.image}`}
+              />
+            </div>
+
+            <div
+              className={serviceIndex % 2 === 0 ? "md:order-1" : "md:order-2"}
+            >
+              <div className="max-w-lg">
+                <span className="text-xl text-accent font-bold">
+                  {service.title}
+                </span>
+                <h1 className="text-3xl text-primary font-bold mt-2 font-['Poetsen_One']">
+                  {service.subtitle}
+                </h1>
+                <p className="text-lg text-gray-600 mt-4">
+                  {service.description}
+                </p>
+
+                <ServiceCtaButtons
+                  ctas={service.ctas}
+                  onVideoSurvey={onVideoSurvey}
+                  onWebsiteAudit={onWebsiteAudit}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+            {service.categories.map((category, catIndex) => (
+              <div
+                key={`service-${serviceIndex}-category-${category.id ?? catIndex}`}
+                className={`rounded-lg p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:shadow-blue-400/50
+                  ${
+                    catIndex % 2 === 0
+                      ? "bg-gradient-to-r from-slate-50 via-primary/20 to-accent/10 hover:to-primary/50"
+                      : "bg-gradient-to-r from-accent/10 via-accent/30 to-primary/10 hover:to-primary/50"
+                  }`}
+              >
+                <h3 className="text-primary font-bold text-lg">
+                  {category.name}
+                </h3>
+                <p className="text-gray-600 text-base mt-2">
+                  {category.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="text-center mb-6">
+        <h4 className="text-primary font-bold text-lg">
+          Or Choose a Ready-Made Plan
+        </h4>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {packages.map((pkg) => (
+          <div
+            key={pkg.name}
+            className={`relative rounded-2xl p-5 flex flex-col transition-all hover:-translate-y-1
+              ${
+                pkg.popular
+                  ? "bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-accent shadow-xl shadow-accent/20"
+                  : "bg-slate-800 border border-slate-700 hover:bg-slate-700"
+              }`}
+          >
+            {pkg.popular && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                Most Popular
+              </span>
+            )}
+
+            <pkg.icon className="h-8 w-8 text-accent-light mb-3 mt-2" />
+            <h3 className="text-white font-bold text-lg">{pkg.name}</h3>
+            <p className="text-2xl font-black text-white mt-1 mb-4">
+              ₱{pkg.price}
+              <span className="text-sm font-medium text-slate-400">/month</span>
+            </p>
+
+            <div className="space-y-2 flex-1">
+              {pkg.features.map((f) => (
+                <div key={f} className="flex items-start gap-2">
+                  <GoCheck className="text-accent-light shrink-0 mt-0.5" />
+                  <span className="text-slate-300 text-sm">{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <button
+          onClick={onWebsiteAudit}
+          className="flex items-center gap-2 rounded-full bg-[#0d1b3e] border-2 border-[#f5a623] px-5 py-2.5 text-sm font-bold text-[#f5a623] transition-all duration-300 hover:bg-[#f5a623] hover:text-[#0d1b3e] hover:shadow-lg"
+        >
+          <MdOutlineSpeed className="h-4 w-4" />
+          Already have a site? Get a Website Audit
+        </button>
+      </div> */}
+    </div>
+  );
+}
+
+/* ============================================================================
+ * SECTION: Market Research
+ * ========================================================================== */
+
+const MarketResearchIllustration = () => (
+  <div className="w-full aspect-video rounded-xl overflow-hidden">
+    <svg viewBox="0 0 640 360" className="w-full h-full block">
+      <rect width="640" height="360" fill="#0d1b3e" />
+      <rect
+        x="40"
+        y="45"
+        width="370"
+        height="270"
+        rx="14"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <rect
+        x="40"
+        y="45"
+        width="370"
+        height="270"
+        rx="14"
+        fill="none"
+        stroke="#f5a623"
+        strokeWidth="1.5"
+        opacity="0.4"
+      />
+      <rect x="70" y="195" width="30" height="95" rx="5" fill="#38bdf8" />
+      <rect
+        x="115"
+        y="165"
+        width="30"
+        height="125"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+      <rect x="160" y="120" width="30" height="170" rx="5" fill="#f5a623" />
+      <rect
+        x="205"
+        y="150"
+        width="30"
+        height="140"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+      <rect x="250" y="95" width="30" height="195" rx="5" fill="#f5a623" />
+      <rect
+        x="295"
+        y="115"
+        width="30"
+        height="175"
+        rx="5"
+        fill="#38bdf8"
+        opacity="0.8"
+      />
+      <polyline
+        points="85,185 130,155 175,110 220,135 265,85 310,100"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.85"
+      />
+      <circle cx="310" cy="100" r="5" fill="#ffffff" />
+      <circle
+        cx="345"
+        cy="240"
+        r="38"
+        fill="#0d1b3e"
+        stroke="#f5a623"
+        strokeWidth="6"
+      />
+      <circle
+        cx="345"
+        cy="240"
+        r="27"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth="2"
+        opacity="0.5"
+      />
+      <line
+        x1="371"
+        y1="266"
+        x2="400"
+        y2="295"
+        stroke="#f5a623"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <text x="333" y="247" fontSize="22" fill="#ffffff" fontWeight="bold">
+        $
+      </text>
+      <rect
+        x="430"
+        y="45"
+        width="170"
+        height="110"
+        rx="12"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <text x="452" y="95" fontSize="30" fontWeight="bold" fill="#f5a623">
+        +142%
+      </text>
+      <text x="452" y="120" fontSize="14" fill="#ffffff" opacity="0.7">
+        Market Growth
+      </text>
+      <rect
+        x="430"
+        y="170"
+        width="170"
+        height="110"
+        rx="12"
+        fill="#ffffff"
+        opacity="0.06"
+      />
+      <text x="452" y="220" fontSize="30" fontWeight="bold" fill="#38bdf8">
+        3.2x
+      </text>
+      <text x="452" y="245" fontSize="14" fill="#ffffff" opacity="0.7">
+        Audience Insight
+      </text>
+    </svg>
+  </div>
+);
+
+function MarketResearchSection({
+  onRequestReport,
+}: {
+  onRequestReport: () => void;
+}) {
+  return (
+    <div className="w-full">
+      <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 mb-10">
+        <div className="h-1.5 w-full bg-accent" />
+        <div className="p-5 sm:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <MarketResearchIllustration />
+            <div>
+              <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase text-accent mb-2">
+                <FaSearchDollar className="h-4 w-4" />
+                Market Research
+              </span>
+              <h3 className="text-primary font-bold text-2xl mb-3">
+                Market Research Report
+              </h3>
+              <p className="text-gray-500 text-sm">
+                Data-backed insights on your market, competitors, and audience —
+                so every decision you make is backed by real numbers, not
+                guesswork.
+              </p>
+              <div className="mt-6">
+                <Button
+                  className="bg-accent text-white font-medium"
+                  endContent={<LuArrowRight size={18} />}
+                  onPress={onRequestReport}
+                >
+                  Request a Report
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center mb-6">
+        <h4 className="text-primary font-bold text-lg">
+          As Our Client, Here's What You Gain
+        </h4>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 rounded-2xl bg-slate-50 p-4 sm:p-6">
+        {researchBenefits.map((benefit) => (
+          <div
+            key={benefit.title}
+            className="rounded-xl bg-white p-5 text-center shadow-sm ring-1 ring-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all"
+          >
+            <div
+              className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full"
+              style={{ backgroundColor: `${benefit.color}1a` }}
+            >
+              <benefit.icon
+                className="h-6 w-6"
+                style={{ color: benefit.color }}
+              />
+            </div>
+            <h3 className="text-primary font-semibold text-sm mb-1">
+              {benefit.title}
+            </h3>
+            <p className="text-gray-500 text-xs">{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================================
+ * SECTION: Branding & Marketing carousel
+ * ========================================================================== */
+
+function BrandingSection({
+  onVideoSurvey,
+  onWebsiteAudit,
+  onRequestButtonClick,
+}: {
+  onVideoSurvey: () => void;
+  onWebsiteAudit: () => void;
+  onRequestButtonClick: (key: BenefitsRequestButtonKey) => void;
+}) {
   const [selectedService, setSelectedService] = useState<string | null>(
     brandingServices[0]?.name ?? null,
   );
-  const [videoSurveyOpen, setVideoSurveyOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Request a Report modal
-  const {
-    isOpen: isReportOpen,
-    onOpen: onReportOpen,
-    onOpenChange: onReportOpenChange,
-  } = useDisclosure();
-
-  // Request a Website Audit modal
-  const {
-    isOpen: isAuditOpen,
-    onOpen: onAuditOpen,
-    onOpenChange: onAuditOpenChange,
-  } = useDisclosure();
 
   const scroll = (dir: "left" | "right") => {
     scrollRef.current?.scrollBy({
@@ -861,6 +1179,404 @@ const Services = () => {
   const activeService = brandingServices.find(
     (s) => s.name === selectedService,
   );
+
+  return (
+    <div className="w-full">
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => scroll("left")}
+          aria-label="Scroll left"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-md ring-1 ring-gray-200 hover:bg-primary hover:text-white transition-colors"
+        >
+          <LuChevronLeft size={18} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => scroll("right")}
+          aria-label="Scroll right"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-md ring-1 ring-gray-200 hover:bg-primary hover:text-white transition-colors"
+        >
+          <LuChevronRight size={18} />
+        </button>
+
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
+          {brandingServices.map((service) => {
+            const isSelected = selectedService === service.name;
+            return (
+              <div
+                key={service.name}
+                className={`group relative shrink-0 w-[220px] h-32 snap-start overflow-hidden rounded-xl cursor-pointer shadow-md transition-all
+                  ${isSelected ? "ring-2 ring-accent ring-offset-2" : "ring-1 ring-gray-200 hover:shadow-lg"}`}
+                onClick={() =>
+                  setSelectedService(isSelected ? null : service.name)
+                }
+              >
+                {service.type === "benefits" && service.thumbnailImage ? (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center p-3"
+                    style={{
+                      background: `linear-gradient(135deg, ${service.color}, ${service.color}cc)`,
+                    }}
+                  >
+                    <img
+                      src={service.thumbnailImage}
+                      alt={service.name}
+                      className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                ) : service.type === "benefits" ? (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      background: `linear-gradient(135deg, ${service.color}, ${service.color}cc)`,
+                    }}
+                  >
+                    <service.icon className="h-10 w-10 text-white/90 transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                ) : (
+                  <img
+                    src={`/images/services/${service.image}`}
+                    alt={service.name}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+                <span className="absolute bottom-3 left-3 text-white font-semibold text-sm drop-shadow">
+                  {service.name}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {activeService && (
+        <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div
+            className="h-1.5 w-full"
+            style={{
+              background:
+                activeService.type === "benefits"
+                  ? activeService.color
+                  : "#f59e0b",
+            }}
+          />
+          <div className="p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                {activeService.type === "benefits" && (
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full shrink-0"
+                    style={{ backgroundColor: `${activeService.color}1a` }}
+                  >
+                    <activeService.icon
+                      className="h-5 w-5"
+                      style={{ color: activeService.color }}
+                    />
+                  </div>
+                )}
+                <h3 className="text-primary font-bold text-lg">
+                  {activeService.type === "benefits"
+                    ? `${activeService.name} — What You Get`
+                    : activeService.name}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedService(null)}
+                className="text-gray-400 hover:text-gray-600 shrink-0"
+                aria-label="Close"
+              >
+                <LuX size={20} />
+              </button>
+            </div>
+
+            {activeService.type === "benefits" ? (
+              <div>
+                {activeService.tagline && (
+                  <p className="text-gray-500 text-sm mb-4">
+                    {activeService.tagline}
+                  </p>
+                )}
+
+                {activeService.thumbnailImage ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
+                    <img
+                      src={activeService.thumbnailImage}
+                      alt={activeService.name}
+                      className="w-full h-56 object-contain"
+                    />
+                    <div className="grid grid-cols-1 gap-4">
+                      {activeService.benefits.map((benefit) => (
+                        <div
+                          key={benefit.title}
+                          className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                        >
+                          <div
+                            className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                            style={{
+                              backgroundColor: `${activeService.color}1a`,
+                            }}
+                          >
+                            <benefit.icon
+                              className="h-4.5 w-4.5"
+                              style={{ color: activeService.color }}
+                            />
+                          </div>
+                          <div>
+                            <h4 className="text-primary font-semibold text-sm">
+                              {benefit.title}
+                            </h4>
+                            <p className="text-gray-500 text-xs mt-0.5">
+                              {benefit.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+
+                      {activeService.requestButtonKey && (
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {activeService.benefits.map((benefit) => (
+                      <div
+                        key={benefit.title}
+                        className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                      >
+                        <div
+                          className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
+                          style={{
+                            backgroundColor: `${activeService.color}1a`,
+                          }}
+                        >
+                          <benefit.icon
+                            className="h-4.5 w-4.5"
+                            style={{ color: activeService.color }}
+                          />
+                        </div>
+                        <div>
+                          <h4 className="text-primary font-semibold text-sm">
+                            {benefit.title}
+                          </h4>
+                          <p className="text-gray-500 text-xs mt-0.5">
+                            {benefit.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {activeService.requestButtonKey && (
+                      <div className="sm:col-span-2">
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className={
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].className
+                          }
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeService.showSEOAuditForm && <SEOAuditBanner />}
+              </div>
+            ) : (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
+                  <img
+                    src={`/images/services/${activeService.image}`}
+                    alt={activeService.name}
+                    className="w-full h-56 object-contain"
+                  />
+                  <div>
+                    <h4 className="text-primary font-bold text-base mb-2">
+                      {activeService.subtitle}
+                    </h4>
+                    <p className="text-gray-500 text-sm">
+                      {activeService.description}
+                    </p>
+                    <ServiceCtaButtons
+                      ctas={activeService.ctas}
+                      onVideoSurvey={onVideoSurvey}
+                      onWebsiteAudit={onWebsiteAudit}
+                      className="mt-4 flex flex-wrap gap-3"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {activeService.categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className="rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
+                    >
+                      <h4 className="text-primary font-semibold text-sm">
+                        {category.name}
+                      </h4>
+                      <p className="text-gray-500 text-xs mt-0.5">
+                        {category.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {activeService.showSEOAuditForm && <SEOAuditBanner />}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================================
+ * SECTION: All page modals, in one place
+ * ========================================================================== */
+
+interface ServiceModalsProps {
+  videoSurveyOpen: boolean;
+  onVideoSurveyOpenChange: (open: boolean) => void;
+  reportOpen: boolean;
+  onReportOpenChange: (open: boolean) => void;
+  auditOpen: boolean;
+  onAuditOpenChange: (open: boolean) => void;
+  socialMediaOpen: boolean;
+  onSocialMediaOpenChange: (open: boolean) => void;
+  tiktokShopOpen: boolean;
+  onTiktokShopOpenChange: (open: boolean) => void;
+  juantapOpen: boolean;
+  onJuantapOpenChange: (open: boolean) => void;
+}
+
+function ServiceModals({
+  videoSurveyOpen,
+  onVideoSurveyOpenChange,
+  reportOpen,
+  onReportOpenChange,
+  auditOpen,
+  onAuditOpenChange,
+  socialMediaOpen,
+  onSocialMediaOpenChange,
+  tiktokShopOpen,
+  onTiktokShopOpenChange,
+  juantapOpen,
+  onJuantapOpenChange,
+}: ServiceModalsProps) {
+  return (
+    <>
+      <Dialog open={videoSurveyOpen} onOpenChange={onVideoSurveyOpenChange}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 [&>button]:hidden">
+          <VideoSurveyForm
+            onClose={() => onVideoSurveyOpenChange(false)}
+            onSubmitSuccess={() => onVideoSurveyOpenChange(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <RequestReportModal
+        isOpen={reportOpen}
+        onOpenChange={onReportOpenChange}
+      />
+
+      <RequestWebsiteAuditModal
+        isOpen={auditOpen}
+        onOpenChange={onAuditOpenChange}
+      />
+
+      <RequestSocialMediaModal
+        isOpen={socialMediaOpen}
+        onOpenChange={onSocialMediaOpenChange}
+      />
+
+      <RequestTikTokShopModal
+        isOpen={tiktokShopOpen}
+        onOpenChange={onTiktokShopOpenChange}
+      />
+
+      <RequestJuanTapModal
+        isOpen={juantapOpen}
+        onOpenChange={onJuantapOpenChange}
+      />
+    </>
+  );
+}
+
+/* ============================================================================
+ * MAIN PAGE — tabbed navigation (Website Solutions / Market Research /
+ * Branding & Marketing) so the page renders only one section at a time
+ * instead of one long scroll.
+ * ========================================================================== */
+
+export default function Services() {
+  const [activeTab, setActiveTab] = useState<MainCategoryKey>("website");
+
+  const [videoSurveyOpen, setVideoSurveyOpen] = useState(false);
+  const {
+    isOpen: reportOpen,
+    onOpen: openReport,
+    onOpenChange: onReportOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: auditOpen,
+    onOpen: openAudit,
+    onOpenChange: onAuditOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: socialMediaOpen,
+    onOpen: openSocialMedia,
+    onOpenChange: onSocialMediaOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: tiktokShopOpen,
+    onOpen: openTiktokShop,
+    onOpenChange: onTiktokShopOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: juantapOpen,
+    onOpen: openJuantap,
+    onOpenChange: onJuantapOpenChange,
+  } = useDisclosure();
+
+  const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
+    if (key === "socialMedia") openSocialMedia();
+    if (key === "tiktokShop") openTiktokShop();
+    if (key === "juantap") openJuantap();
+  };
 
   return (
     <section className="container mx-auto px-4 py-12 lg:py-16">
@@ -890,382 +1606,39 @@ const Services = () => {
         ))}
       </div>
 
-      {/* WEBSITE SOLUTIONS */}
       {activeTab === "website" && (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {packages.map((pkg) => (
-              <div
-                key={pkg.name}
-                className={`relative rounded-2xl p-5 flex flex-col transition-all hover:-translate-y-1
-                  ${
-                    pkg.popular
-                      ? "bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-accent shadow-xl shadow-accent/20"
-                      : "bg-slate-800 border border-slate-700 hover:bg-slate-700"
-                  }`}
-              >
-                {pkg.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-accent to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-                    Most Popular
-                  </span>
-                )}
-
-                <pkg.icon className="h-8 w-8 text-accent-light mb-3 mt-2" />
-                <h3 className="text-white font-bold text-lg">{pkg.name}</h3>
-                <p className="text-2xl font-black text-white mt-1 mb-4">
-                  ₱{pkg.price}
-                  <span className="text-sm font-medium text-slate-400">
-                    /month
-                  </span>
-                </p>
-
-                <div className="space-y-2 flex-1">
-                  {pkg.features.map((f) => (
-                    <div key={f} className="flex items-start gap-2">
-                      <GoCheck className="text-accent-light shrink-0 mt-0.5" />
-                      <span className="text-slate-300 text-sm">{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            {/* <Button
-              className="bg-accent text-white font-medium"
-              endContent={<LuArrowRight size={18} />}
-              onPress={() => router.push("/quote")}
-            >
-              Get a Free Quote
-            </Button> */}
-            <button
-              onClick={onAuditOpen}
-              className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
-            >
-              <MdOutlineSpeed className="h-4 w-4 text-accent" />
-              Already have a site? Get a Website Audit
-            </button>
-          </div>
-        </div>
+        <WebsiteSolutionsSection
+          onVideoSurvey={() => setVideoSurveyOpen(true)}
+          onWebsiteAudit={openAudit}
+        />
       )}
 
-      {/* MARKET RESEARCH */}
       {activeTab === "research" && (
-        <div>
-          {/* Hero: image + copy, same layout language as the branding detail cards */}
-          <div className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 mb-10">
-            <div className="h-1.5 w-full bg-accent" />
-            <div className="p-5 sm:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div className="rounded-xl overflow-hidden">
-                  <MarketResearchIllustration />
-                </div>
-                <div>
-                  <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase text-accent mb-2">
-                    <FaSearchDollar className="h-4 w-4" />
-                    Market Research
-                  </span>
-                  <h3 className="text-primary font-bold text-2xl mb-3">
-                    Market Research Report
-                  </h3>
-                  <p className="text-gray-500 text-sm">
-                    Data-backed insights on your market, competitors, and
-                    audience — so every decision you make is backed by real
-                    numbers, not guesswork.
-                  </p>
-                  <div className="mt-6">
-                    <Button
-                      className="bg-accent text-white font-medium"
-                      endContent={<LuArrowRight size={18} />}
-                      onPress={onReportOpen}
-                    >
-                      Request a Report
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mb-6">
-            <h4 className="text-primary font-bold text-lg">
-              As Our Client, Here's What You Gain
-            </h4>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 rounded-2xl bg-slate-50 p-4 sm:p-6">
-            {researchBenefits.map((benefit) => (
-              <div
-                key={benefit.title}
-                className="rounded-xl bg-white p-5 text-center shadow-sm ring-1 ring-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all"
-              >
-                <div
-                  className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full"
-                  style={{ backgroundColor: `${benefit.color}1a` }}
-                >
-                  <benefit.icon
-                    className="h-6 w-6"
-                    style={{ color: benefit.color }}
-                  />
-                </div>
-                <h3 className="text-primary font-semibold text-sm mb-1">
-                  {benefit.title}
-                </h3>
-                <p className="text-gray-500 text-xs">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* <div className="flex justify-center">
-            <Button
-              className="bg-accent text-white font-medium"
-              endContent={<LuArrowRight size={18} />}
-              onPress={onReportOpen}
-            >
-              Request a Report
-            </Button>
-          </div> */}
-        </div>
+        <MarketResearchSection onRequestReport={openReport} />
       )}
 
-      {/* BRANDING & DIGITAL MARKETING — carousel + expandable detail/benefit panel */}
       {activeTab === "branding" && (
-        <div>
-          <div className="relative">
-            <div className="flex gap-3">
-              {brandingServices.map((service) => {
-                const isSelected = selectedService === service.name;
-                return (
-                  <div
-                    key={service.name}
-                    className={`group relative flex-1 min-w-0 h-32 overflow-hidden rounded-xl cursor-pointer shadow-md transition-all
-            ${isSelected ? "ring-2 ring-accent ring-offset-2" : "ring-1 ring-gray-200 hover:shadow-lg"}`}
-                    onClick={() =>
-                      setSelectedService(isSelected ? null : service.name)
-                    }
-                  >
-                    {service.type === "benefits" && service.thumbnailImage ? (
-                      <img
-                        src={service.thumbnailImage}
-                        alt={service.name}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    ) : service.type === "benefits" ? (
-                      <div
-                        className="absolute inset-0 flex items-center justify-center"
-                        style={{
-                          background: `linear-gradient(135deg, ${service.color}, ${service.color}cc)`,
-                        }}
-                      >
-                        <service.icon className="h-10 w-10 text-white/90" />
-                      </div>
-                    ) : (
-                      <img
-                        src={`/images/services/${service.image}`}
-                        alt={service.name}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <span className="absolute bottom-0 left-0 right-0 px-2 py-2 text-white font-semibold text-xs sm:text-sm drop-shadow line-clamp-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                      {service.name}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Expanded panel for the selected service */}
-          {activeService && (
-            <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div
-                className="h-1.5 w-full"
-                style={{
-                  background:
-                    activeService.type === "benefits"
-                      ? activeService.color
-                      : "#f59e0b",
-                }}
-              />
-              <div className="p-5 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {activeService.type === "benefits" && (
-                      <div
-                        className="flex h-10 w-10 items-center justify-center rounded-full shrink-0"
-                        style={{ backgroundColor: `${activeService.color}1a` }}
-                      >
-                        <activeService.icon
-                          className="h-5 w-5"
-                          style={{ color: activeService.color }}
-                        />
-                      </div>
-                    )}
-                    <h3 className="text-primary font-bold text-lg">
-                      {activeService.type === "benefits"
-                        ? `${activeService.name} — What You Get`
-                        : activeService.name}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={() => setSelectedService(null)}
-                    className="text-gray-400 hover:text-gray-600 shrink-0"
-                    aria-label="Close"
-                  >
-                    <LuX size={20} />
-                  </button>
-                </div>
-
-                {activeService.type === "benefits" ? (
-                  <div>
-                    {activeService.tagline && (
-                      <p className="text-gray-500 text-sm mb-4">
-                        {activeService.tagline}
-                      </p>
-                    )}
-
-                    {activeService.thumbnailImage ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
-                        <div className="flex items-center justify-center bg-slate-50 rounded-xl h-72 md:h-80 p-4">
-                          <img
-                            src={activeService.thumbnailImage}
-                            alt={activeService.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 gap-4">
-                          {activeService.benefits.map((benefit) => (
-                            <div
-                              key={benefit.title}
-                              className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
-                            >
-                              <div
-                                className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                                style={{
-                                  backgroundColor: `${activeService.color}1a`,
-                                }}
-                              >
-                                <benefit.icon
-                                  className="h-4.5 w-4.5"
-                                  style={{ color: activeService.color }}
-                                />
-                              </div>
-                              <div>
-                                <h4 className="text-primary font-semibold text-sm">
-                                  {benefit.title}
-                                </h4>
-                                <p className="text-gray-500 text-xs mt-0.5">
-                                  {benefit.description}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {activeService.benefits.map((benefit) => (
-                          <div
-                            key={benefit.title}
-                            className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
-                          >
-                            <div
-                              className="flex h-9 w-9 items-center justify-center rounded-full shrink-0"
-                              style={{
-                                backgroundColor: `${activeService.color}1a`,
-                              }}
-                            >
-                              <benefit.icon
-                                className="h-4.5 w-4.5"
-                                style={{ color: activeService.color }}
-                              />
-                            </div>
-                            <div>
-                              <h4 className="text-primary font-semibold text-sm">
-                                {benefit.title}
-                              </h4>
-                              <p className="text-gray-500 text-xs mt-0.5">
-                                {benefit.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {activeService.showSEOAuditForm && <SEOAuditBanner />}
-                  </div>
-                ) : (
-                  <div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
-                      <div className="flex items-center justify-center bg-slate-50 rounded-xl h-56 md:h-64 p-6">
-                        <img
-                          src={`/images/services/${activeService.image}`}
-                          alt={activeService.name}
-                          className="max-w-full max-h-full object-contain"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="text-primary font-bold text-base mb-2">
-                          {activeService.subtitle}
-                        </h4>
-                        <p className="text-gray-500 text-sm">
-                          {activeService.description}
-                        </p>
-                        <ServiceCtaButtons
-                          ctas={activeService.ctas}
-                          onVideoSurvey={() => setVideoSurveyOpen(true)}
-                          onWebsiteAudit={onAuditOpen}
-                          className="mt-4 flex flex-wrap gap-3"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {activeService.categories.map((category) => (
-                        <div
-                          key={category.id}
-                          className="rounded-xl bg-slate-50 p-4 ring-1 ring-gray-100 hover:ring-gray-200 transition-all"
-                        >
-                          <h4 className="text-primary font-semibold text-sm">
-                            {category.name}
-                          </h4>
-                          <p className="text-gray-500 text-xs mt-0.5">
-                            {category.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                    {activeService.showSEOAuditForm && <SEOAuditBanner />}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <BrandingSection
+          onVideoSurvey={() => setVideoSurveyOpen(true)}
+          onWebsiteAudit={openAudit}
+          onRequestButtonClick={handleRequestButtonClick}
+        />
       )}
 
-      <RequestReportModal
-        isOpen={isReportOpen}
-        onOpenChange={onReportOpenChange}
+      <ServiceModals
+        videoSurveyOpen={videoSurveyOpen}
+        onVideoSurveyOpenChange={setVideoSurveyOpen}
+        reportOpen={reportOpen}
+        onReportOpenChange={onReportOpenChange}
+        auditOpen={auditOpen}
+        onAuditOpenChange={onAuditOpenChange}
+        socialMediaOpen={socialMediaOpen}
+        onSocialMediaOpenChange={onSocialMediaOpenChange}
+        tiktokShopOpen={tiktokShopOpen}
+        onTiktokShopOpenChange={onTiktokShopOpenChange}
+        juantapOpen={juantapOpen}
+        onJuantapOpenChange={onJuantapOpenChange}
       />
-      <RequestWebsiteAuditModal
-        isOpen={isAuditOpen}
-        onOpenChange={onAuditOpenChange}
-      />
-
-      {/* Video survey modal — opened via the Photography & Videography CTA */}
-      <Dialog open={videoSurveyOpen} onOpenChange={setVideoSurveyOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 [&>button]:hidden">
-          <VideoSurveyForm
-            onClose={() => setVideoSurveyOpen(false)}
-            onSubmitSuccess={() => setVideoSurveyOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
     </section>
   );
-};
-
-export default Services;
+}

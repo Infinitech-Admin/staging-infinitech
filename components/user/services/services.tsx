@@ -8,6 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import VideoSurveyForm from "@/components/video-survey-form";
 import RequestReportModal from "@/components/RequestReportModal";
 import RequestWebsiteAuditModal from "@/components/RequestWebsiteAuditModal";
+import RequestSocialMediaModal from "@/components/Requestsocialmediamodal ";
+import RequestTikTokShopModal from "@/components/Requesttiktokshopmodal";
+import RequestJuanTapModal from "@/components/RequestJuanTapModal";
 import {
   LuArrowRight,
   LuChevronLeft,
@@ -32,6 +35,10 @@ import {
   FaCrosshairs,
   FaSlidersH,
   FaSearchDollar,
+  FaAddressCard,
+  FaUsers,
+  FaPalette,
+  FaBolt,
 } from "react-icons/fa";
 
 /* ============================================================================
@@ -65,6 +72,10 @@ interface BenefitsService {
   thumbnailImage?: string;
   // Optional: show the Free SEO Audit lead-gen form when this card expands.
   showSEOAuditForm?: boolean;
+  // Optional: show a lead-gen "Request ..." CTA button when this card
+  // expands. Key selects which modal/label to use (see
+  // benefitsRequestButtonConfig below).
+  requestButtonKey?: BenefitsRequestButtonKey;
 }
 interface DetailService {
   name: string;
@@ -136,53 +147,6 @@ const services = [
       },
     ],
   },
-  {
-    title: "GRAPHIC DESIGN",
-    subtitle: "Bringing Your Brand to Life with Stunning Designs",
-    description: `Our creative team designs visually appealing graphics that reflect your brand identity, making a lasting impression on your audience. From logos to promotional materials, we've got you covered.`,
-    image: "design.svg",
-    categories: [
-      {
-        id: 1,
-        name: "Logo Design",
-        description: "Unique logos that capture your brand identity.",
-      },
-      {
-        id: 2,
-        name: "Marketing Collateral",
-        description: "Brochures, flyers, and promotional materials.",
-      },
-      {
-        id: 3,
-        name: "Digital Assets",
-        description: "Social media graphics, banners, and ads.",
-      },
-    ],
-  },
-  {
-    title: "SOCIAL MEDIA MARKETING",
-    subtitle: "Maximize Engagement Through Social Media",
-    description: `We develop and manage engaging social media campaigns that build brand awareness, increase customer engagement, and drive business growth. Let us help you connect with your audience effectively.`,
-    image: "marketing.svg",
-    categories: [
-      {
-        id: 1,
-        name: "Campaign Strategy",
-        description: "Tailored strategies to maximize reach and engagement.",
-      },
-      {
-        id: 2,
-        name: "Content Creation",
-        description:
-          "Engaging posts, videos, and graphics for social platforms.",
-      },
-      {
-        id: 3,
-        name: "Analytics & Reporting",
-        description: "Tracking performance and optimizing campaigns.",
-      },
-    ],
-  },
 ];
 
 /* ============================================================================
@@ -203,6 +167,33 @@ const serviceCtaConfig: Record<ServiceCtaKey, ServiceCtaConfigEntry> = {
   websiteAudit: {
     label: "Already have a site? Get a Website Audit",
     kind: "secondary",
+  },
+};
+
+// Keys for the lead-gen "Request ..." buttons shown on benefits-type
+// branding cards (Social Media Management, TikTok Shop Opening, JuanTap,
+// etc). Add a new key here + reference it in a card's `requestButtonKey`
+// to attach a button — the actual click handler is passed in from the page.
+type BenefitsRequestButtonKey = "socialMedia" | "tiktokShop" | "juantap";
+
+const benefitsRequestButtonConfig: Record<
+  BenefitsRequestButtonKey,
+  { label: string; className: string }
+> = {
+  socialMedia: {
+    label: "Request Social Media Management",
+    className:
+      "bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  tiktokShop: {
+    label: "Request TikTok Shop Opening",
+    className:
+      "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
+  },
+  juantap: {
+    label: "Apply for JuanTap",
+    className:
+      "bg-[#f5a623] hover:bg-[#e0951a] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg w-fit",
   },
 };
 
@@ -242,7 +233,7 @@ function ServiceCtaButtons({
             <button
               key={ctaKey}
               onClick={onWebsiteAudit}
-              className="flex items-center gap-2 rounded-full border border-primary/20 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary hover:bg-primary/5"
+              className="flex items-center gap-2 rounded-full bg-[#0d1b3e] border-2 border-[#f5a623] px-5 py-2.5 text-sm font-bold text-[#f5a623] transition-all duration-300 hover:bg-[#f5a623] hover:text-[#0d1b3e] hover:shadow-lg"
             >
               {cta.label}
             </button>
@@ -312,6 +303,9 @@ const brandingServices: BrandingService[] = [
     // block above — shown as the carousel thumbnail and as the large
     // image when this card is expanded.
     thumbnailImage: "/images/services/marketing.svg",
+    // Shows the "Request Social Media Management" CTA button when this
+    // card expands.
+    requestButtonKey: "socialMedia",
     benefits: [
       {
         icon: FaCalendarAlt,
@@ -342,6 +336,7 @@ const brandingServices: BrandingService[] = [
     color: "#f43f5e",
     tagline: "Get your shop live and selling fast.",
     thumbnailImage: "/tiktokshop.png",
+    requestButtonKey: "tiktokShop",
     benefits: [
       {
         icon: FaStore,
@@ -445,27 +440,37 @@ const brandingServices: BrandingService[] = [
     ],
   },
   {
+    // Converted from a plain "detail" card to a "benefits" card so it can
+    // show the "Apply for JuanTap" lead-gen button (same treatment as
+    // Social Media Management / TikTok Shop Opening) when expanded.
     name: "JuanTap",
-    type: "detail",
-    image: "juantap.png",
-    subtitle: "Modern Networking Made Simple",
-    description: `Transform the way you network with JuanTap, our innovative digital business card solution. Share your contact information instantly with a single tap, making connections effortless and eco-friendly. Stand out in the digital age while keeping all your professional details accessible anytime, anywhere.`,
-    categories: [
+    type: "benefits",
+    icon: FaAddressCard,
+    color: "#6366f1",
+    tagline: "Share your info with a single tap.",
+    thumbnailImage: "/images/services/juantap.png",
+    requestButtonKey: "juantap",
+    benefits: [
       {
-        id: 1,
-        name: "Personal Profiles",
+        icon: FaAddressCard,
+        title: "Personal Profiles",
         description:
           "Digital cards for individuals to share contact info instantly.",
       },
       {
-        id: 2,
-        name: "Corporate Teams",
+        icon: FaUsers,
+        title: "Corporate Teams",
         description: "Centralized business card solutions for organizations.",
       },
       {
-        id: 3,
-        name: "Custom Branding",
+        icon: FaPalette,
+        title: "Custom Branding",
         description: "Tailored designs to match your brand identity.",
+      },
+      {
+        icon: FaBolt,
+        title: "Instant Tap Sharing",
+        description: "Share your details in a single tap — no app required.",
       },
     ],
   },
@@ -496,6 +501,30 @@ const brandingServices: BrandingService[] = [
         icon: FaSlidersH,
         title: "Scalable Budget Control",
         description: "Start small and scale up what performs.",
+      },
+    ],
+  },
+  {
+    name: "Graphic Design",
+    type: "detail",
+    image: "design.svg",
+    subtitle: "Bringing Your Brand to Life with Stunning Designs",
+    description: `Our creative team designs visually appealing graphics that reflect your brand identity, making a lasting impression on your audience. From logos to promotional materials, we've got you covered.`,
+    categories: [
+      {
+        id: 1,
+        name: "Logo Design",
+        description: "Unique logos that capture your brand identity.",
+      },
+      {
+        id: 2,
+        name: "Marketing Collateral",
+        description: "Brochures, flyers, and promotional materials.",
+      },
+      {
+        id: 3,
+        name: "Digital Assets",
+        description: "Social media graphics, banners, and ads.",
       },
     ],
   },
@@ -969,9 +998,11 @@ function MarketResearchSection({
 function BrandingSection({
   onVideoSurvey,
   onWebsiteAudit,
+  onRequestButtonClick,
 }: {
   onVideoSurvey: () => void;
   onWebsiteAudit: () => void;
+  onRequestButtonClick: (key: BenefitsRequestButtonKey) => void;
 }) {
   const [selectedService, setSelectedService] = useState<string | null>(
     brandingServices[0]?.name ?? null,
@@ -1004,18 +1035,18 @@ function BrandingSection({
         </p>
       </div>
 
-      <div className="relative">
-        {/* <button
+      <div className="relative overflow-hidden">
+        <button
           onClick={() => scroll("left")}
-          className="hidden sm:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
+          className="hidden sm:flex absolute left-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
           aria-label="Scroll left"
         >
           <LuChevronLeft className="text-primary" size={20} />
-        </button> */}
+        </button>
 
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 px-2 sm:px-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {brandingServices.map((service) => {
             const isSelected = selectedService === service.name;
@@ -1059,13 +1090,13 @@ function BrandingSection({
           })}
         </div>
 
-        {/* <button
+        <button
           onClick={() => scroll("right")}
-          className="hidden sm:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
+          className="hidden sm:flex absolute right-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50"
           aria-label="Scroll right"
         >
           <LuChevronRight className="text-primary" size={20} />
-        </button> */}
+        </button>
       </div>
 
       {activeService && (
@@ -1118,8 +1149,9 @@ function BrandingSection({
 
                 {activeService.thumbnailImage ? (
                   // Image + benefits side-by-side (used by Social Media
-                  // Management, and any other benefits-card that sets
-                  // thumbnailImage). Mirrors the "detail" card layout below.
+                  // Management, TikTok Shop Opening, JuanTap, and any
+                  // other benefits-card that sets thumbnailImage). Mirrors
+                  // the "detail" card layout below.
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-2">
                     <img
                       src={activeService.thumbnailImage}
@@ -1153,11 +1185,28 @@ function BrandingSection({
                           </div>
                         </div>
                       ))}
+
+                      {activeService.requestButtonKey && (
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      )}
                     </div>
                   </div>
                 ) : (
                   // Default layout — plain grid of benefit tiles, no image
-                  // (TikTok Shop Opening, Paid Ads, etc.)
+                  // (Paid Ads, etc.)
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {activeService.benefits.map((benefit) => (
                       <div
@@ -1185,6 +1234,25 @@ function BrandingSection({
                         </div>
                       </div>
                     ))}
+
+                    {activeService.requestButtonKey && (
+                      <div className="sm:col-span-2">
+                        <ShadButton
+                          onClick={() =>
+                            onRequestButtonClick(
+                              activeService.requestButtonKey!,
+                            )
+                          }
+                          className="bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg w-fit"
+                        >
+                          {
+                            benefitsRequestButtonConfig[
+                              activeService.requestButtonKey
+                            ].label
+                          }
+                        </ShadButton>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1254,6 +1322,12 @@ interface ServiceModalsProps {
   onReportOpenChange: (open: boolean) => void;
   auditOpen: boolean;
   onAuditOpenChange: (open: boolean) => void;
+  socialMediaOpen: boolean;
+  onSocialMediaOpenChange: (open: boolean) => void;
+  tiktokShopOpen: boolean;
+  onTiktokShopOpenChange: (open: boolean) => void;
+  juantapOpen: boolean;
+  onJuantapOpenChange: (open: boolean) => void;
 }
 
 function ServiceModals({
@@ -1263,6 +1337,12 @@ function ServiceModals({
   onReportOpenChange,
   auditOpen,
   onAuditOpenChange,
+  socialMediaOpen,
+  onSocialMediaOpenChange,
+  tiktokShopOpen,
+  onTiktokShopOpenChange,
+  juantapOpen,
+  onJuantapOpenChange,
 }: ServiceModalsProps) {
   return (
     <>
@@ -1287,6 +1367,24 @@ function ServiceModals({
         isOpen={auditOpen}
         onOpenChange={onAuditOpenChange}
       />
+
+      {/* 4. Request social media management */}
+      <RequestSocialMediaModal
+        isOpen={socialMediaOpen}
+        onOpenChange={onSocialMediaOpenChange}
+      />
+
+      {/* 5. Request TikTok Shop opening */}
+      <RequestTikTokShopModal
+        isOpen={tiktokShopOpen}
+        onOpenChange={onTiktokShopOpenChange}
+      />
+
+      {/* 6. Apply for JuanTap */}
+      <RequestJuanTapModal
+        isOpen={juantapOpen}
+        onOpenChange={onJuantapOpenChange}
+      />
     </>
   );
 }
@@ -1309,12 +1407,34 @@ export default function Services() {
     onOpen: openAudit,
     onOpenChange: onAuditOpenChange,
   } = useDisclosure();
+  const {
+    isOpen: socialMediaOpen,
+    onOpen: openSocialMedia,
+    onOpenChange: onSocialMediaOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: tiktokShopOpen,
+    onOpen: openTiktokShop,
+    onOpenChange: onTiktokShopOpenChange,
+  } = useDisclosure();
+  const {
+    isOpen: juantapOpen,
+    onOpen: openJuantap,
+    onOpenChange: onJuantapOpenChange,
+  } = useDisclosure();
+
+  // Routes a benefits-card lead-gen button click to the right modal.
+  const handleRequestButtonClick = (key: BenefitsRequestButtonKey) => {
+    if (key === "socialMedia") openSocialMedia();
+    if (key === "tiktokShop") openTiktokShop();
+    if (key === "juantap") openJuantap();
+  };
 
   return (
-    <div className="mx-4 flex flex-col justify-center items-center">
-      <section className="container mx-auto px-4 lg:px-8 mb-12 bg-white">
+    <div className="w-full bg-white flex flex-col justify-center items-center">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 bg-white">
         <div className="flex flex-col justify-center items-center">
-          <div className="xl:py-8">
+          <div className="w-full xl:py-8">
             <div className="flex flex-col justify-center items-center">
               {services.map((service, serviceIndex) => (
                 <div
@@ -1388,6 +1508,7 @@ export default function Services() {
               <BrandingSection
                 onVideoSurvey={() => setVideoSurveyOpen(true)}
                 onWebsiteAudit={openAudit}
+                onRequestButtonClick={handleRequestButtonClick}
               />
             </div>
           </div>
@@ -1402,6 +1523,12 @@ export default function Services() {
         onReportOpenChange={onReportOpenChange}
         auditOpen={auditOpen}
         onAuditOpenChange={onAuditOpenChange}
+        socialMediaOpen={socialMediaOpen}
+        onSocialMediaOpenChange={onSocialMediaOpenChange}
+        tiktokShopOpen={tiktokShopOpen}
+        onTiktokShopOpenChange={onTiktokShopOpenChange}
+        juantapOpen={juantapOpen}
+        onJuantapOpenChange={onJuantapOpenChange}
       />
     </div>
   );

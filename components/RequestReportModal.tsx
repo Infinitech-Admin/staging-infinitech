@@ -1,3 +1,4 @@
+// 📁 Place this file at: components/RequestReportModal.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -35,6 +36,11 @@ const initialForm: ReportFormData = {
   details: "",
 };
 
+// Allows digits, spaces, +, -, ( ) — rejects any letters or other symbols.
+const PHONE_ALLOWED_CHARS = /^[0-9+\-()\s]*$/;
+// Final validity check: needs at least 7 digits once formatting chars are stripped.
+const PHONE_VALID = /^[0-9]{7,15}$/;
+
 const RequestReportModal = ({
   isOpen,
   onOpenChange,
@@ -42,25 +48,56 @@ const RequestReportModal = ({
   const [form, setForm] = useState<ReportFormData>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const handleChange = (field: keyof ReportFormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const isValid = form.name.trim() !== "" && form.email.trim() !== "";
+  const handlePhoneChange = (value: string) => {
+    if (!PHONE_ALLOWED_CHARS.test(value)) {
+      return;
+    }
+
+    handleChange("phone", value);
+
+    const digitsOnly = value.replace(/[^0-9]/g, "");
+    if (value.trim() === "") {
+      setPhoneError(null);
+    } else if (!PHONE_VALID.test(digitsOnly)) {
+      setPhoneError("Enter a valid phone number (numbers only).");
+    } else {
+      setPhoneError(null);
+    }
+  };
+
+  const isPhoneValid = form.phone.trim() === "" || phoneError === null;
+
+  const isValid =
+    form.name.trim() !== "" && form.email.trim() !== "" && isPhoneValid;
 
   const handleSubmit = async () => {
     if (!isValid) return;
     setSubmitting(true);
+    setErrorMsg(null);
     try {
-      // TODO: wire this up to your real endpoint / API route
-      // await fetch("/api/market-research-request", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(form),
-      // });
-      await new Promise((res) => setTimeout(res, 800)); // mock latency
+      const res = await fetch("/api/market-research-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.message || "Something went wrong. Please try again.");
+        return;
+      }
+
       setSubmitted(true);
+    } catch {
+      setErrorMsg("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -74,6 +111,8 @@ const RequestReportModal = ({
         setForm(initialForm);
         setSubmitted(false);
         setSubmitting(false);
+        setErrorMsg(null);
+        setPhoneError(null);
       }, 200); // wait for close animation
     }
   };
@@ -139,8 +178,12 @@ const RequestReportModal = ({
                 <Input
                   label="Phone Number"
                   placeholder="09XX XXX XXXX"
+                  type="tel"
+                  inputMode="tel"
                   value={form.phone}
-                  onValueChange={(v) => handleChange("phone", v)}
+                  onValueChange={handlePhoneChange}
+                  isInvalid={!!phoneError}
+                  errorMessage={phoneError ?? undefined}
                 />
                 <Input
                   label="Company Name"
@@ -155,6 +198,9 @@ const RequestReportModal = ({
                   onValueChange={(v) => handleChange("details", v)}
                   minRows={3}
                 />
+                {errorMsg && (
+                  <p className="text-red-500 text-sm px-1">{errorMsg}</p>
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button variant="light" onPress={onClose}>

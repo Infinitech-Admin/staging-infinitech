@@ -11,54 +11,73 @@ import {
   Input,
   Textarea,
 } from "@heroui/react";
-import { FaGlobe } from "react-icons/fa";
+import { FaHashtag } from "react-icons/fa";
 import { GoCheck } from "react-icons/go";
 
-interface RequestWebsiteAuditModalProps {
+interface RequestSocialMediaModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-interface AuditFormData {
+interface SocialMediaFormData {
   name: string;
   email: string;
   phone: string;
   company: string;
-  website: string;
+  platforms: string[];
   details: string;
 }
 
-const initialForm: AuditFormData = {
+const initialForm: SocialMediaFormData = {
   name: "",
   email: "",
   phone: "",
   company: "",
-  website: "",
+  platforms: [],
   details: "",
 };
+
+const PLATFORM_OPTIONS = [
+  "Facebook",
+  "Instagram",
+  "TikTok",
+  "LinkedIn",
+  "X (Twitter)",
+  "YouTube",
+];
 
 // Allows digits, spaces, +, -, ( ) — rejects any letters or other symbols.
 const PHONE_ALLOWED_CHARS = /^[0-9+\-()\s]*$/;
 // Final validity check: needs at least 7 digits once formatting chars are stripped.
 const PHONE_VALID = /^[0-9]{7,15}$/;
 
-const RequestWebsiteAuditModal = ({
+const RequestSocialMediaModal = ({
   isOpen,
   onOpenChange,
-}: RequestWebsiteAuditModalProps) => {
-  const [form, setForm] = useState<AuditFormData>(initialForm);
+}: RequestSocialMediaModalProps) => {
+  const [form, setForm] = useState<SocialMediaFormData>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
-  const handleChange = (field: keyof AuditFormData, value: string) => {
+  const handleChange = (
+    field: keyof Omit<SocialMediaFormData, "platforms">,
+    value: string,
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const togglePlatform = (platform: string) => {
+    setForm((prev) => ({
+      ...prev,
+      platforms: prev.platforms.includes(platform)
+        ? prev.platforms.filter((p) => p !== platform)
+        : [...prev.platforms, platform],
+    }));
+  };
+
   const handlePhoneChange = (value: string) => {
-    // Reject the keystroke entirely if it introduces a disallowed character
-    // (i.e. letters or symbols other than + - ( ) and spaces).
     if (!PHONE_ALLOWED_CHARS.test(value)) {
       return;
     }
@@ -78,20 +97,20 @@ const RequestWebsiteAuditModal = ({
   const isPhoneValid = form.phone.trim() === "" || phoneError === null;
 
   const isValid =
-    form.name.trim() !== "" &&
-    form.email.trim() !== "" &&
-    form.website.trim() !== "" &&
-    isPhoneValid;
+    form.name.trim() !== "" && form.email.trim() !== "" && isPhoneValid;
 
   const handleSubmit = async () => {
     if (!isValid) return;
     setSubmitting(true);
     setErrorMsg(null);
     try {
-      const res = await fetch("/api/website-inquiry", {
+      const res = await fetch("/api/social-media-requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          platforms: form.platforms.join(","),
+        }),
       });
 
       const data = await res.json();
@@ -137,7 +156,8 @@ const RequestWebsiteAuditModal = ({
                   Request Sent!
                 </h3>
                 <p className="text-gray-500 text-sm mt-1">
-                  Our team will reach out with your website audit shortly.
+                  Our team will reach out about managing your social media
+                  shortly.
                 </p>
               </ModalBody>
               <ModalFooter className="justify-center">
@@ -153,15 +173,15 @@ const RequestWebsiteAuditModal = ({
             <>
               <ModalHeader className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 shrink-0">
-                  <FaGlobe className="h-4 w-4 text-accent" />
+                  <FaHashtag className="h-4 w-4 text-accent" />
                 </div>
                 <div>
                   <p className="text-primary font-bold text-base leading-tight">
-                    Request a Website Audit
+                    Request Social Media Management
                   </p>
                   <p className="text-gray-500 text-xs font-normal">
-                    Tell us about your site and we&apos;ll follow up with a full
-                    audit.
+                    Tell us about your brand and we&apos;ll follow up with a
+                    plan.
                   </p>
                 </div>
               </ModalHeader>
@@ -197,16 +217,35 @@ const RequestWebsiteAuditModal = ({
                   value={form.company}
                   onValueChange={(v) => handleChange("company", v)}
                 />
-                <Input
-                  label="Website URL"
-                  placeholder="https://yourbusiness.com"
-                  value={form.website}
-                  onValueChange={(v) => handleChange("website", v)}
-                  isRequired
-                />
+
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Which platforms do you want managed?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {PLATFORM_OPTIONS.map((platform) => {
+                      const selected = form.platforms.includes(platform);
+                      return (
+                        <button
+                          key={platform}
+                          type="button"
+                          onClick={() => togglePlatform(platform)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                            selected
+                              ? "bg-accent text-white border-accent"
+                              : "bg-white text-gray-600 border-gray-300 hover:border-accent"
+                          }`}
+                        >
+                          {platform}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <Textarea
-                  label="What would you like us to focus on?"
-                  placeholder="e.g. SEO, page speed, mobile usability, conversion rate..."
+                  label="Tell us about your current presence & goals"
+                  placeholder="e.g. We post occasionally on Facebook, want consistent content and better engagement..."
                   value={form.details}
                   onValueChange={(v) => handleChange("details", v)}
                   minRows={3}
@@ -236,4 +275,4 @@ const RequestWebsiteAuditModal = ({
   );
 };
 
-export default RequestWebsiteAuditModal;
+export default RequestSocialMediaModal;
