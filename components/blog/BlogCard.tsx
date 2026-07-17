@@ -1,8 +1,9 @@
 "use client";
 
-import { Play, Calendar, User } from "lucide-react";
+import { Play } from "lucide-react";
 import { BlogPost } from "./types";
 import { formatDate, excerpt } from "./utils";
+import { useVideoThumbnail } from "./useVideoThumbnail";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -11,62 +12,61 @@ interface BlogCardProps {
 
 export default function BlogCard({ post, onClick }: BlogCardProps) {
   const hasVideo = Boolean(post.videoUrl);
+  const hasImage = Boolean(post.imageUrl);
+
+  const { thumbnail, loading: thumbLoading } = useVideoThumbnail(
+    !hasImage && hasVideo ? post.videoUrl : null,
+  );
+
+  const coverSrc = hasImage ? post.imageUrl! : thumbnail;
+  const title = post.title?.trim() || "Untitled post";
+  const description = post.description?.trim();
 
   return (
-    <button
-      onClick={onClick}
-      className="group text-left bg-slate-800/50 border border-slate-700 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:bg-slate-800/70 transition-all duration-300 flex flex-col h-full"
-    >
-      {/* Media */}
-      <div className="relative aspect-video bg-slate-900 overflow-hidden">
-        {post.imageUrl ? (
+    <button onClick={onClick} className="group text-left flex flex-col h-full">
+      <div className="relative aspect-[4/3] overflow-hidden bg-primary/10 mb-4">
+        {coverSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={post.imageUrl}
-            alt={post.title}
+            src={coverSrc}
+            alt={title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+        ) : hasVideo && thumbLoading ? (
+          <div className="w-full h-full animate-pulse bg-primary/10" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-600 text-sm">
+          <div className="w-full h-full flex items-center justify-center text-primary/30 text-xs uppercase tracking-widest">
             No image
           </div>
         )}
-
         {hasVideo && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-            <span className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg">
-              <Play className="w-6 h-6 text-white ml-0.5" fill="currentColor" />
-            </span>
-          </div>
-        )}
-
-        {post.category && (
-          <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-slate-900/80 text-cyan-400 border border-cyan-500/30">
-            {post.category}
+          <span className="absolute top-3 right-3 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow group-hover:scale-110 transition-transform">
+            <Play className="w-4 h-4 text-accent ml-0.5" fill="currentColor" />
           </span>
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-cyan-400 transition-colors">
-          {post.title}
+      <div className="flex flex-col flex-1 min-h-[132px]">
+        {post.category && (
+          <span className="text-accent text-[11px] font-bold tracking-[0.15em] uppercase mb-2">
+            {post.category}
+          </span>
+        )}
+
+        <h3 className="text-xl font-bold text-primary leading-snug mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+          {title}
         </h3>
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">
-          {excerpt(post.description, 140)}
+
+        <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3 flex-1">
+          {description ? excerpt(description, 110) : "No description provided."}
         </p>
 
-        <div className="flex items-center gap-4 text-xs text-slate-500 mt-auto pt-3 border-t border-slate-700">
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
-            {formatDate(post.publishedAt)}
-          </span>
+        <div className="flex items-center gap-2 text-[11px] tracking-wider uppercase text-gray-400 font-semibold pt-3 border-t border-gray-200">
+          {post.author && <span className="truncate">{post.author}</span>}
           {post.author && (
-            <span className="flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" />
-              {post.author}
-            </span>
+            <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
           )}
+          <span className="shrink-0">{formatDate(post.publishedAt)}</span>
         </div>
       </div>
     </button>
