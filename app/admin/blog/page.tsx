@@ -109,6 +109,10 @@ export default function BlogAdminPage() {
   const [videoUploading, setVideoUploading] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
 
+  // Delete confirmation dialog state
+  const [deleteTarget, setDeleteTarget] = useState<BlogPostRecord | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (!token) {
@@ -272,18 +276,21 @@ export default function BlogAdminPage() {
     }
   };
 
-  const handleDelete = async (post: BlogPostRecord) => {
-    if (!confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
-
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await deleteBlogPost(post.id);
+      await deleteBlogPost(deleteTarget.id);
       setMessage("Blog post deleted successfully!");
+      setDeleteTarget(null);
       loadPosts();
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       console.error("Error deleting blog post:", error);
       setMessage("Failed to delete blog post.");
       setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -491,7 +498,7 @@ export default function BlogAdminPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleDelete(post)}
+                            onClick={() => setDeleteTarget(post)}
                             className="border-2 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-800"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -738,6 +745,52 @@ export default function BlogAdminPage() {
                   "Save Changes"
                 ) : (
                   "Create Post"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete confirmation dialog */}
+        <Dialog
+          open={deleteTarget !== null}
+          onOpenChange={(open) => !open && setDeleteTarget(null)}
+        >
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Delete this post?</DialogTitle>
+              <DialogDescription>
+                {deleteTarget && (
+                  <>
+                    You&apos;re about to permanently delete{" "}
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">
+                      &ldquo;{deleteTarget.title}&rdquo;
+                    </span>
+                    . This cannot be undone.
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                disabled={deleting}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {deleting ? (
+                  <>
+                    <Loader className="h-4 w-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete Post"
                 )}
               </Button>
             </DialogFooter>
