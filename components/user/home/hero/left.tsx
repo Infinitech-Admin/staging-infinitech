@@ -36,7 +36,7 @@ const Left = () => {
         </h1>
 
         <p className="md:text-lg text-gray-400">
-          Website • Research • Branding • Marketing
+          Website • Marketing Research • Branding
         </p>
       </div>
 

@@ -114,10 +114,11 @@ export default function TestimonialForm({
           <h3
             className={`text-3xl text-primary font-bold ${poetsen_one.className}`}
           >
-            Share Your Experience
+            Tell Us About Your Challenge
           </h3>
           <p className="text-gray-500 mt-2 text-sm">
-            We'd love to hear how we've helped your business grow.
+            Share your business challenge with us, and we'll help you find the
+            right solution.
           </p>
         </div>
 
@@ -187,14 +188,15 @@ export default function TestimonialForm({
 
             <div className="flex flex-col gap-1 sm:col-span-2">
               <label className="text-sm font-medium text-gray-700">
-                Your Testimonial <span className="text-red-500">*</span>
+                Describe Your Business Challenge{" "}
+                <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="message"
                 value={form.message}
                 onChange={handleInputChange}
                 rows={5}
-                placeholder="Tell us about your experience working with Infinitech..."
+                placeholder="Share the challenges you're facing, and we'll recommend the best solution."
                 className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors resize-none focus:border-primary focus:ring-2 focus:ring-primary/10 ${
                   errors.message
                     ? "border-red-400 bg-red-50"
